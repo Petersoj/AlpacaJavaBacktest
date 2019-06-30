@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'maven'
+    id 'maven-publish'
+}
+
+group 'net.jacobpeterson.trading'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    compile group: 'io.github.mainstringargs', name: 'alpaca-java', version: '3.1.0-SNAPSHOT'
+    
+}
