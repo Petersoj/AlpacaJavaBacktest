@@ -3,13 +3,12 @@ package net.jacobpeterson.trading.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.mainstringargs.polygon.PolygonAPI;
-import io.github.mainstringargs.polygon.domain.Quote;
-import io.github.mainstringargs.polygon.domain.Trade;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 /**
  * Used for querying and caching ticker Quotes and Trades queried from <a href="https://polygon.io/">Polygon</a>.
@@ -59,7 +58,8 @@ public class TickerData {
      * @param to   the to LocalDateTime
      * @return ticker trade iterator
      */
-    public TickerDataIterator<Trade> getTickerTrades(LocalDateTime from, LocalDateTime to) {
+    public Iterator<io.github.mainstringargs.polygon.domain.historic.trades.Tick> getTickerTrades(LocalDateTime from,
+                                                                                                  LocalDateTime to) {
         // TODO
         return null;
     }
@@ -72,7 +72,8 @@ public class TickerData {
      * @param to   the to LocalDateTime
      * @return ticker quotes iterator
      */
-    public TickerDataIterator<Quote> getTickerQuotes(LocalDateTime from, LocalDateTime to) {
+    public Iterator<io.github.mainstringargs.polygon.domain.historic.quotes.Tick> getTickerQuotes(LocalDateTime from,
+                                                                                                  LocalDateTime to) {
         // TODO
         return null;
     }
