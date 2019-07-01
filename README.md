@@ -12,5 +12,6 @@ contains a PolygonAPI and useful POJO classes.
   * Ticker Data caching and indexing for fastest retrieval speed (chronological ordering system)
   * Actual backtesting functionality
 * Add various strategies to test in src/test/java with JUnit
-* More stats (like shown in the 'stats' output [here](http://pmorissette.github.io/bt/index.html#a-quick-example)
-* Add JFreeCharts for P&L charts, comp. of SPX, etc.
+* More stats (like shown in the 'stats' output [here](http://pmorissette.github.io/bt/index.html#a-quick-example))
+* Add JFreeCharts for P&L charts, comp. of SPX, etc. OR internal website that hosts interactive 
+charts via [Plotly](https://plot.ly/javascript/)
