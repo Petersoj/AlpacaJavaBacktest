@@ -1,4 +1,5 @@
 <p align="center"><img src="https://i.imgur.com/TltWc5R.png"></p>
+
 Alpaca Java Backtest is a simple and fast stock trading algorithm backtesting library. It uses
 [Polygon](https://polygon.io/) for historic quotes, trades, aggregates, and other equity data points to give
 instantaneously give backtesters a more accurate understanding of what their algorithm might do in a live market.
