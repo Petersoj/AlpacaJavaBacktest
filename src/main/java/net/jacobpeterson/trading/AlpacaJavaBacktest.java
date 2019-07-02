@@ -17,7 +17,7 @@ public class AlpacaJavaBacktest {
 
     }
 
-    public void updatePortfolio() {
+    public void backtest() {
 
     }
 }
