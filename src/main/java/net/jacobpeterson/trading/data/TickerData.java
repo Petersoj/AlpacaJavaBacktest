@@ -3,25 +3,29 @@ package net.jacobpeterson.trading.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.mainstringargs.polygon.PolygonAPI;
+import io.github.mainstringargs.polygon.domain.aggregate.Aggregates;
 import io.github.mainstringargs.polygon.domain.aggregate.Result;
 import io.github.mainstringargs.polygon.enums.Timespan;
+import io.github.mainstringargs.polygon.rest.exceptions.PolygonAPIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Iterator;
 
 /**
- * Used for querying and caching ticker Quotes and Trades queried from <a href="https://polygon.io/">Polygon</a>.
+ * Used for querying and caching ticker Quotes, Trades, and aggregates queried from
+ * <a href="https://polygon.io/">Polygon</a>.
  */
 public class TickerData {
 
     private static final Logger LOGGER = LogManager.getLogger(TickerData.class);
-
+    private static final String TICKER_AGGREGATES_FILE_EXT = ".aggregates.json";
     private static final String TICKER_TRADES_FILE_EXT = ".trades.json";
     private static final String TICKER_QUOTES_FILE_EXT = ".quotes.json";
-
+    private static final String CACHE_DIRECTORY_NAME = ".alpacajavabacktest";
     private static final Gson GSON = new GsonBuilder().create();
 
     private final PolygonAPI polygonAPI;
@@ -35,7 +39,7 @@ public class TickerData {
      */
     public TickerData(PolygonAPI polygonAPI) {
         this.polygonAPI = polygonAPI;
-        this.tickerCacheDirectory = new File(System.getProperty("user.home"));
+        this.tickerCacheDirectory = new File(System.getProperty("user.home"), CACHE_DIRECTORY_NAME);
         this.persistentCacheDisabled = false;
     }
 
@@ -61,15 +65,24 @@ public class TickerData {
      *
      * @param ticker   the ticker
      * @param timespan the timespan
-     * @param from     the from
-     * @param to       the to
+     * @param from     the from LocalDate
+     * @param to       the to LocalDate
      * @return the aggregates
      */
-    public Iterator<Result> getAggregates(String ticker,
-                                          Timespan timespan,
-                                          LocalDateTime from,
-                                          LocalDateTime to) {
-        // TODO
+    public Iterator<Result> getAggregates(String ticker, Timespan timespan, LocalDate from, LocalDate to)
+            throws PolygonAPIException, IOException {
+
+        Aggregates aggregates;
+
+        if (tickerCacheDirectory.exists()) {
+
+        }
+
+//        LOGGER.info("{} Aggregates for {} using {} timespan from {} to {}.", loadType, ticker, timespan.name(),
+//                from.toString(), to.toString());
+
+        aggregates = polygonAPI.getAggregates(ticker, 1, timespan, from, to, false);
+
         return null;
     }
 
@@ -80,13 +93,13 @@ public class TickerData {
      * Note that Trade data does not exist from Polygon for dates earlier than Jan. 2, 2011
      *
      * @param ticker the ticker
-     * @param from   the from LocalDateTime
-     * @param to     the to LocalDateTime
+     * @param from   the from LocalDate
+     * @param to     the to LocalDate
      * @return ticker trade iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.trades.Tick> getTickerTrades(String ticker,
-                                                                                                  LocalDateTime from,
-                                                                                                  LocalDateTime to) {
+                                                                                                  LocalDate from,
+                                                                                                  LocalDate to) {
         // TODO
         return null;
     }
@@ -98,15 +111,19 @@ public class TickerData {
      * Note that Quote data does not exist from Polygon for dates earlier than Jan. 2, 2011
      *
      * @param ticker the ticker
-     * @param from   the from LocalDateTime
-     * @param to     the to LocalDateTime
+     * @param from   the from LocalDate
+     * @param to     the to LocalDate
      * @return ticker quotes iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.quotes.Tick> getTickerQuotes(String ticker,
-                                                                                                  LocalDateTime from,
-                                                                                                  LocalDateTime to) {
+                                                                                                  LocalDate from,
+                                                                                                  LocalDate to) {
         // TODO
         return null;
+    }
+
+    public void formatFile() {
+
     }
 
     /**

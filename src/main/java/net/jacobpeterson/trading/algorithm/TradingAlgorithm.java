@@ -14,7 +14,7 @@ import net.jacobpeterson.trading.backtest.BacktestPortfolio;
  * {@link BacktestPortfolio} is updated constantly so if your algorithm references current buying power, equity, P&L,
  * etc., you will have accurate data.
  */
-public abstract class AlgorithmTrader {
+public abstract class TradingAlgorithm {
 
     protected BacktestPortfolio backtestPortfolio;
     protected BacktestBroker backtestBroker;
@@ -25,14 +25,14 @@ public abstract class AlgorithmTrader {
      * @param backtestPortfolio the backtest portfolio
      * @param backtestBroker    the backtest broker
      */
-    public AlgorithmTrader(BacktestPortfolio backtestPortfolio, BacktestBroker backtestBroker) {
+    public TradingAlgorithm(BacktestPortfolio backtestPortfolio, BacktestBroker backtestBroker) {
         this.backtestPortfolio = backtestPortfolio;
         this.backtestBroker = backtestBroker;
     }
 
     /**
      * This method is executed on the close of an aggregate time frame.
-     * The aggregate time frame may specified in the {@link TickerUpdateListeners}
+     * The aggregate time frame may specified in the {@link TickerUpdateType}
      *
      * @param result   the aggregate result
      * @param timespan the timespan of the aggregate {@link Result}
