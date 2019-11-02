@@ -1,8 +1,7 @@
 package net.jacobpeterson.trading.algorithm;
 
 /**
- * These enums are used to specify which updates/methods will be triggered/executed in the
- * {@link TradingAlgorithm}.
+ * These enums are used to specify which updates/methods will be triggered/executed in the {@link TradingAlgorithm}.
  */
 public enum TickerUpdateType {
 

@@ -16,12 +16,11 @@ import java.time.LocalDate;
 import java.util.Iterator;
 
 /**
- * Used for querying and caching ticker Quotes, Trades, and aggregates queried from
- * <a href="https://polygon.io/">Polygon</a>.
+ * Used for querying and caching data queried from <a href="https://polygon.io/">Polygon</a>.
  */
-public class TickerData {
+public class BacktestData {
 
-    private static final Logger LOGGER = LogManager.getLogger(TickerData.class);
+    private static final Logger LOGGER = LogManager.getLogger(BacktestData.class);
     private static final String TICKER_AGGREGATES_FILE_EXT = ".aggregates.json";
     private static final String TICKER_TRADES_FILE_EXT = ".trades.json";
     private static final String TICKER_QUOTES_FILE_EXT = ".quotes.json";
@@ -33,11 +32,11 @@ public class TickerData {
     private final boolean persistentCacheDisabled;
 
     /**
-     * Instantiates a new Ticker data with "user.home" as the caching directory.
+     * Instantiates a new Ticker data with <code>System.getProperty("user.home")</code> as the caching directory.
      *
      * @param polygonAPI the polygon api
      */
-    public TickerData(PolygonAPI polygonAPI) {
+    public BacktestData(PolygonAPI polygonAPI) {
         this.polygonAPI = polygonAPI;
         this.tickerCacheDirectory = new File(System.getProperty("user.home"), CACHE_DIRECTORY_NAME);
         this.persistentCacheDisabled = false;
@@ -50,7 +49,7 @@ public class TickerData {
      * @param tickerCacheDirectory    the ticker cache directory
      * @param persistentCacheDisabled is persistent cache disabled
      */
-    public TickerData(PolygonAPI polygonAPI, File tickerCacheDirectory, boolean persistentCacheDisabled) {
+    public BacktestData(PolygonAPI polygonAPI, File tickerCacheDirectory, boolean persistentCacheDisabled) {
         this.polygonAPI = polygonAPI;
         this.tickerCacheDirectory = tickerCacheDirectory;
         this.persistentCacheDisabled = persistentCacheDisabled;
@@ -59,14 +58,15 @@ public class TickerData {
 
     /**
      * Provides an iterator for Aggregate data on a ticker. This will fetch data from Polygon if it doesn't exist on the
-     * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in
-     * {@link #getTickerCacheDirectory()}).
-     * Note that Trade data does not exist from Polygon for dates earlier than Jan. 2, 2011
+     * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
+     * #getTickerCacheDirectory()}). Note that Trade data does not exist from Polygon for dates earlier than Jan. 2,
+     * 2011
      *
      * @param ticker   the ticker
      * @param timespan the timespan
      * @param from     the from LocalDate
      * @param to       the to LocalDate
+     *
      * @return the aggregates
      */
     public Iterator<Result> getAggregates(String ticker, Timespan timespan, LocalDate from, LocalDate to)
@@ -87,14 +87,15 @@ public class TickerData {
     }
 
     /**
-     * Provides an iterator for Trade data on a ticker. This will fetch data from Polygon if it doesn't exist on the cache.
-     * The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in
-     * {@link #getTickerCacheDirectory()}).
-     * Note that Trade data does not exist from Polygon for dates earlier than Jan. 2, 2011
+     * Provides an iterator for Trade data on a ticker. This will fetch data from Polygon if it doesn't exist on the
+     * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
+     * #getTickerCacheDirectory()}). Note that Trade data does not exist from Polygon for dates earlier than Jan. 2,
+     * 2011
      *
      * @param ticker the ticker
      * @param from   the from LocalDate
      * @param to     the to LocalDate
+     *
      * @return ticker trade iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.trades.Tick> getTickerTrades(String ticker,
@@ -105,14 +106,15 @@ public class TickerData {
     }
 
     /**
-     * Provides an iterator for Quote data on a ticker. This will fetch data from Polygon if it doesn't exist on the cache.
-     * The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in
-     * {@link #getTickerCacheDirectory()}).
-     * Note that Quote data does not exist from Polygon for dates earlier than Jan. 2, 2011
+     * Provides an iterator for Quote data on a ticker. This will fetch data from Polygon if it doesn't exist on the
+     * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
+     * #getTickerCacheDirectory()}). Note that Quote data does not exist from Polygon for dates earlier than Jan. 2,
+     * 2011
      *
      * @param ticker the ticker
      * @param from   the from LocalDate
      * @param to     the to LocalDate
+     *
      * @return ticker quotes iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.quotes.Tick> getTickerQuotes(String ticker,
