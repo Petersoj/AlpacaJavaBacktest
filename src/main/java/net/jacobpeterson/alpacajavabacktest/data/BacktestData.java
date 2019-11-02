@@ -15,14 +15,15 @@ import java.time.LocalDate;
 import java.util.Iterator;
 
 /**
- * Used for querying and caching data queried from <a href="https://polygon.io/">Polygon</a>.
+ * Used for querying and caching data from <a href="https://polygon.io/">Polygon</a> and
+ * <a href="https://alpaca.markets">Alpaca</a>.
  */
 public class BacktestData {
 
     private static final Logger LOGGER = LogManager.getLogger(BacktestData.class);
-    private static final String TICKER_AGGREGATES_FILE_EXT = ".aggregates.json";
-    private static final String TICKER_TRADES_FILE_EXT = ".trades.json";
-    private static final String TICKER_QUOTES_FILE_EXT = ".quotes.json";
+    private static final String TICKER_AGGREGATES_FILE_EXTENSION = ".aggregates.json";
+    private static final String TICKER_TRADES_FILE_EXTENSION = ".trades.json";
+    private static final String TICKER_QUOTES_FILE_EXTENSION = ".quotes.json";
     private static final String CACHE_DIRECTORY_NAME = ".alpacajavabacktest";
     private static final Gson GSON = new GsonBuilder().create();
 
@@ -69,7 +70,9 @@ public class BacktestData {
      */
     public Iterator<Result> getAggregates(String ticker, Timespan timespan, LocalDate from, LocalDate to)
             throws PolygonAPIException, IOException {
+        synchronized (BacktestData.class) {
 
+        }
         return null;
     }
 
@@ -90,7 +93,9 @@ public class BacktestData {
     public Iterator<io.github.mainstringargs.polygon.domain.historic.trades.Tick> getTickerTrades(String ticker,
                                                                                                   LocalDate from,
                                                                                                   LocalDate to) {
-        // TODO
+        synchronized (BacktestData.class) {
+
+        }
         return null;
     }
 
@@ -109,12 +114,10 @@ public class BacktestData {
     public Iterator<io.github.mainstringargs.polygon.domain.historic.quotes.Tick> getTickerQuotes(String ticker,
                                                                                                   LocalDate from,
                                                                                                   LocalDate to) {
-        // TODO
+        synchronized (BacktestData.class) {
+
+        }
         return null;
-    }
-
-    public void formatFile() {
-
     }
 
     /**
@@ -124,5 +127,14 @@ public class BacktestData {
      */
     public File getTickerCacheDirectory() {
         return tickerCacheDirectory;
+    }
+
+    /**
+     * Is persistent cache disabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isPersistentCacheDisabled() {
+        return persistentCacheDisabled;
     }
 }

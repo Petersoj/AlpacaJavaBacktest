@@ -1,7 +1,10 @@
 package net.jacobpeterson.alpacajavabacktest;
 
 import io.github.mainstringargs.polygon.PolygonAPI;
+import net.jacobpeterson.alpacajavabacktest.algorithm.TradingAlgorithm;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
+
+import java.time.LocalDateTime;
 
 /**
  * AlpacaJavaBacktest is a simple and fast Stock Trading Algorithm Backtesting Library for Java that uses
@@ -36,10 +39,28 @@ public class AlpacaJavaBacktest {
     }
 
     /**
-     * Runs the backtest.
+     * Runs multiple backtests either in sync with each other (so that they can communicate with each other) or async
+     * (for backtesting on multiple threads).
+     *
+     * @param tradingAlgorithm    the trading algorithm
+     * @param from                the from
+     * @param to                  the to
+     * @param synchronizeBacktest the synchronize backtest
      */
-    public void backtest() {
-        // TODO
+    public void run(TradingAlgorithm tradingAlgorithm, LocalDateTime from, LocalDateTime to,
+                    boolean synchronizeBacktest) {
+        // TODO implement in a later release
+    }
+
+    /**
+     * Runs a backtest.
+     *
+     * @param tradingAlgorithm the trading algorithm
+     * @param from             the from
+     * @param to               the to
+     */
+    public void run(TradingAlgorithm tradingAlgorithm, LocalDateTime from, LocalDateTime to) {
+
     }
 
     /**

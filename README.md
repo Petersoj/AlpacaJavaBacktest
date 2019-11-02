@@ -7,8 +7,8 @@ AlpacaJavaBacktest is a simple and fast Stock Trading Algorithm Backtesting Libr
 
 ## To-Do
 * Finish 1.0
+* 
 * Add various strategies to test in src/test/java with JUnit
-* Implement Ticker Data caching and indexing for fastest retrieval speed (chronological ordering system) for overlapping dates with ticker data queries
 * Historical ETB and HTB ticker data
 * More stats (like shown in the 'stats' output [here](http://pmorissette.github.io/bt/index.html#a-quick-example))
 * Add JFreeCharts OR internal website that hosts interactive charts via [Plotly](https://plot.ly/javascript/) for P&L charts, comparison of SPX, executed trades displayed on graph, etc.
