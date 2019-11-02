@@ -38,7 +38,7 @@ public class AlpacaJavaBacktest {
     /**
      * Runs the backtest.
      */
-    public void runBacktest() {
+    public void backtest() {
         // TODO
     }
 
