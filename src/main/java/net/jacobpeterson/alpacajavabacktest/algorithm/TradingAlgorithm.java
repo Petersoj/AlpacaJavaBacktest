@@ -1,11 +1,11 @@
-package net.jacobpeterson.trading.algorithm;
+package net.jacobpeterson.alpacajavabacktest.algorithm;
 
 import io.github.mainstringargs.alpaca.domain.Order;
 import io.github.mainstringargs.polygon.domain.aggregate.Result;
 import io.github.mainstringargs.polygon.enums.Timespan;
-import net.jacobpeterson.trading.AlpacaJavaBacktest;
-import net.jacobpeterson.trading.backtest.BacktestBroker;
-import net.jacobpeterson.trading.backtest.BacktestPortfolio;
+import net.jacobpeterson.alpacajavabacktest.AlpacaJavaBacktest;
+import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
+import net.jacobpeterson.alpacajavabacktest.broker.BacktestPortfolio;
 
 /**
  * This is where your algorithm will listen to quotes, trades, aggregated data, and order updates and then promptly

@@ -1,4 +1,4 @@
-package net.jacobpeterson.trading.data;
+package net.jacobpeterson.alpacajavabacktest.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

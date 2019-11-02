@@ -1,4 +1,4 @@
-package net.jacobpeterson.trading.algorithm;
+package net.jacobpeterson.alpacajavabacktest.algorithm;
 
 /**
  * These enums are used to specify which updates/methods will be triggered/executed in the {@link TradingAlgorithm}.

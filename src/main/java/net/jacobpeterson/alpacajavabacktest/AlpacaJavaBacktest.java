@@ -1,7 +1,7 @@
-package net.jacobpeterson.trading;
+package net.jacobpeterson.alpacajavabacktest;
 
 import io.github.mainstringargs.polygon.PolygonAPI;
-import net.jacobpeterson.trading.data.BacktestData;
+import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
 
 /**
  * AlpacaJavaBacktest is a simple and fast Stock Trading Algorithm Backtesting Library for Java that uses

@@ -1,4 +1,4 @@
-package net.jacobpeterson.trading.backtest;
+package net.jacobpeterson.alpacajavabacktest.broker;
 
 import io.github.mainstringargs.alpaca.domain.Order;
 import io.github.mainstringargs.alpaca.domain.Position;
