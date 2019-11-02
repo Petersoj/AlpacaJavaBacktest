@@ -3,7 +3,6 @@ package net.jacobpeterson.trading.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.github.mainstringargs.polygon.PolygonAPI;
-import io.github.mainstringargs.polygon.domain.aggregate.Aggregates;
 import io.github.mainstringargs.polygon.domain.aggregate.Result;
 import io.github.mainstringargs.polygon.enums.Timespan;
 import io.github.mainstringargs.polygon.rest.exceptions.PolygonAPIException;
@@ -55,7 +54,6 @@ public class BacktestData {
         this.persistentCacheDisabled = persistentCacheDisabled;
     }
 
-
     /**
      * Provides an iterator for Aggregate data on a ticker. This will fetch data from Polygon if it doesn't exist on the
      * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
@@ -72,23 +70,14 @@ public class BacktestData {
     public Iterator<Result> getAggregates(String ticker, Timespan timespan, LocalDate from, LocalDate to)
             throws PolygonAPIException, IOException {
 
-        Aggregates aggregates;
-
-        if (tickerCacheDirectory.exists()) {
-
-        }
-
-//        LOGGER.info("{} Aggregates for {} using {} timespan from {} to {}.", loadType, ticker, timespan.name(),
-//                from.toString(), to.toString());
-
-        aggregates = polygonAPI.getAggregates(ticker, 1, timespan, from, to, false);
-
         return null;
     }
 
     /**
      * Provides an iterator for Trade data on a ticker. This will fetch data from Polygon if it doesn't exist on the
-     * cache. The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
+     * cache.
+     * <p>
+     * The Iterator is buffered (via {@link com.google.gson.stream.JsonReader} from a data file in {@link
      * #getTickerCacheDirectory()}). Note that Trade data does not exist from Polygon for dates earlier than Jan. 2,
      * 2011
      *
