@@ -91,8 +91,8 @@ public class BacktestData {
      * @return ticker trade iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.trades.Tick> getTickerTrades(String ticker,
-                                                                                                  LocalDate from,
-                                                                                                  LocalDate to) {
+            LocalDate from,
+            LocalDate to) {
         synchronized (BacktestData.class) {
 
         }
@@ -112,8 +112,8 @@ public class BacktestData {
      * @return ticker quotes iterator
      */
     public Iterator<io.github.mainstringargs.polygon.domain.historic.quotes.Tick> getTickerQuotes(String ticker,
-                                                                                                  LocalDate from,
-                                                                                                  LocalDate to) {
+            LocalDate from,
+            LocalDate to) {
         synchronized (BacktestData.class) {
 
         }

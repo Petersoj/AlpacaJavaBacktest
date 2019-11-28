@@ -7,7 +7,6 @@ AlpacaJavaBacktest is a simple and fast Stock Trading Algorithm Backtesting Libr
 
 ## To-Do
 * Finish 1.0
-* 
 * Add various strategies to test in src/test/java with JUnit
 * Historical ETB and HTB ticker data
 * More stats (like shown in the 'stats' output [here](http://pmorissette.github.io/bt/index.html#a-quick-example))

@@ -48,7 +48,7 @@ public class AlpacaJavaBacktest {
      * @param synchronizeBacktest the synchronize backtest
      */
     public void run(TradingAlgorithm tradingAlgorithm, LocalDateTime from, LocalDateTime to,
-                    boolean synchronizeBacktest) {
+            boolean synchronizeBacktest) {
         // TODO implement in a later release
     }
 

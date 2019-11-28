@@ -39,27 +39,27 @@ public class BacktestPortfolio {
     public static Account createDefaultAccount(float equity, float buyingPowerMultiplier) {
         String equityString = String.valueOf(equity);
         Account account = new Account(PolygonProperties.KEY_ID_VALUE,
-                                      "ACTIVE",
-                                      "USD",
-                                      String.valueOf(equity * buyingPowerMultiplier),
-                                      equityString,
-                                      equityString,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      false,
-                                      "0",
-                                      true,
-                                      String.valueOf(buyingPowerMultiplier),
-                                      "0",
-                                      "0",
-                                      equityString,
-                                      equityString,
-                                      "-1", // TODO implement margin calls in later release
-                                      "-1", // TODO implement margin calls in later release
-                                      0,
-                                      "0");
+                "ACTIVE",
+                "USD",
+                String.valueOf(equity * buyingPowerMultiplier),
+                equityString,
+                equityString,
+                false,
+                false,
+                false,
+                false,
+                false,
+                "0",
+                true,
+                String.valueOf(buyingPowerMultiplier),
+                "0",
+                "0",
+                equityString,
+                equityString,
+                "-1", // TODO implement margin calls in later release
+                "-1", // TODO implement margin calls in later release
+                0,
+                "0");
         return account;
     }
 
