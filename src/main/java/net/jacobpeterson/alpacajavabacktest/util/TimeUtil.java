@@ -1,23 +1,48 @@
 package net.jacobpeterson.alpacajavabacktest.util;
 
+import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class TimeUtil {
 
     /**
-     * Gets days.
+     * Gets date intervals.
      *
-     * @param from the from (inclusive)
-     * @param to   the to (exclusive)
+     * @param aggregateUpdateType the aggregate update type
+     * @param from                the from (inclusive)
+     * @param to                  the to (exclusive)
      *
      * @return the iterable
      */
-    public static ArrayList<LocalDate> getDays(LocalDate from, LocalDate to) {
+    public static ArrayList<LocalDate> getDateIntervals(AggregateUpdateType aggregateUpdateType, LocalDate from,
+            LocalDate to) {
         ArrayList<LocalDate> dayDates = new ArrayList<>();
+        LocalDate currentDate = from.plusDays(0); // Make a copy
 
-        for (LocalDate date = from.plusDays(0); date.isBefore(to); date = date.plusDays(1)) {
-            dayDates.add(date);
+        while (currentDate.isBefore(to)) {
+            dayDates.add(currentDate);
+
+            switch (aggregateUpdateType) {
+                case MINUTE:
+                case HOUR:
+                case DAY:
+                    currentDate = currentDate.plusDays(1);
+                    break;
+                case WEEK:
+                    currentDate = currentDate.plusWeeks(1);
+                    break;
+                case MONTH:
+                    currentDate = currentDate.plusMonths(1);
+                    break;
+                case QUARTER:
+                    currentDate = currentDate.plusMonths(3);
+                    break;
+                case YEAR:
+                    currentDate = currentDate.plusYears(1);
+                    break;
+            }
         }
 
         return dayDates;

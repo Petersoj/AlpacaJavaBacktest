@@ -1,7 +1,7 @@
 package net.jacobpeterson.alpacajavabacktest.data.iterators;
 
 import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
-import io.github.mainstringargs.polygon.enums.Timespan;
+import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
 import net.jacobpeterson.alpacajavabacktest.util.TimeUtil;
 import org.apache.logging.log4j.LogManager;
@@ -18,48 +18,49 @@ import java.util.Iterator;
  */
 public class AggregateIterator implements Iterator<Aggregate> {
 
+    private static final int MAX_AGGREGATE_RESULT_COUNT = 50_000;
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final BacktestData backtestData;
     private final String ticker;
-    private final ArrayList<LocalDate> date;
+    private final AggregateUpdateType aggregateUpdateType;
+    private final ArrayList<LocalDate> dates;
     private final ArrayList<LocalDate> datesToBeFetched;
     private final HashMap<LocalDate, File> datesCachedFiles;
-    private LocalDate currentDay;
+    private int currentDateIndex;
 
     /**
      * Instantiates a new Aggregate iterator.
      *
-     * @param backtestData the backtest data
-     * @param ticker       the ticker
-     * @param timespan     the timespan
-     * @param from         the from
-     * @param to           the to
+     * @param backtestData        the backtest data
+     * @param ticker              the ticker
+     * @param aggregateUpdateType the aggregate update type
+     * @param from                the from
+     * @param to                  the to
      */
-    public AggregateIterator(BacktestData backtestData, String ticker, Timespan timespan, LocalDate from,
-            LocalDate to) {
+    public AggregateIterator(BacktestData backtestData, String ticker, AggregateUpdateType aggregateUpdateType,
+            LocalDate from, LocalDate to) {
         this.backtestData = backtestData;
         this.ticker = ticker;
-        this.date = TimeUtil.getDays(from, to);
+        this.aggregateUpdateType = aggregateUpdateType;
+        this.dates = TimeUtil.getDateIntervals(aggregateUpdateType, from, to);
         this.datesToBeFetched = new ArrayList<>();
         this.datesCachedFiles = new HashMap<>();
-        this.currentDay = from.plusDays(0); // Make a copy
+        this.currentDateIndex = 0;
 
-        this.populateDatesLists(timespan);
+        this.populateDatesLists();
     }
 
     /**
      * Populate dates lists.
-     *
-     * @param timespan the timespan
      */
-    private void populateDatesLists(Timespan timespan) {
+    private void populateDatesLists() {
         if (!backtestData.isPersistentCacheEnabled()) {
-            datesToBeFetched.addAll(date);
+            datesToBeFetched.addAll(dates);
         } else {
-            for (LocalDate dayDate : date) {
-                File dayCachedFile = backtestData.getDataFile(ticker, dayDate, timespan,
-                        BacktestData.TICKER_AGGREGATES_FILE_EXTENSION);
+            for (LocalDate dayDate : dates) {
+                File dayCachedFile = backtestData.getDataFile(ticker, dayDate, aggregateUpdateType,
+                        BacktestData.AGGREGATES_FILE_EXTENSION);
 
                 if (dayCachedFile.exists()) {
                     datesCachedFiles.put(dayDate, dayCachedFile);
@@ -72,11 +73,29 @@ public class AggregateIterator implements Iterator<Aggregate> {
 
     @Override
     public boolean hasNext() {
-        return date.get(date.size() - 1).equals(currentDay);
+        return dates.size() == currentDateIndex - 1;
     }
 
     @Override
     public Aggregate next() {
         return null;
+    }
+
+    /**
+     * Gets ticker.
+     *
+     * @return the ticker
+     */
+    public String getTicker() {
+        return ticker;
+    }
+
+    /**
+     * Gets aggregate update type.
+     *
+     * @return the aggregate update type
+     */
+    public AggregateUpdateType getAggregateUpdateType() {
+        return aggregateUpdateType;
     }
 }

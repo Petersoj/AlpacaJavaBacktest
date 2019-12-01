@@ -82,6 +82,9 @@ public class AlpacaJavaBacktest {
     public void run(TradingAlgorithm tradingAlgorithm) {
         tradingAlgorithm.setBacktestData(backtestData);
         tradingAlgorithm.setBacktestBroker(backtestBroker);
+
+        tradingAlgorithm.init();
+
         // TODO
     }
 

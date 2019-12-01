@@ -7,7 +7,7 @@ import io.github.mainstringargs.domain.polygon.historicquotes.HistoricQuote;
 import io.github.mainstringargs.domain.polygon.historictrades.HistoricTrade;
 import net.jacobpeterson.alpacajavabacktest.AlpacaJavaBacktest;
 import net.jacobpeterson.alpacajavabacktest.algorithm.update.other.MarketEventUpdateType;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.PriceUpdateType;
+import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
 
@@ -37,10 +37,10 @@ public abstract class TradingAlgorithm {
     /**
      * This method is executed on the close of an aggregate time frame.
      *
-     * @param priceUpdateType the price update type
-     * @param aggregate       the aggregate
+     * @param aggregateUpdateType the aggregate update type
+     * @param aggregate           the aggregate
      */
-    public void onAggregateUpdate(PriceUpdateType priceUpdateType, Aggregate aggregate) {}
+    public void onAggregateUpdate(AggregateUpdateType aggregateUpdateType, Aggregate aggregate) {}
 
     /**
      * This method is executed when a trade is executed on an exchange.

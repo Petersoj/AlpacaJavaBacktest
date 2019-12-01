@@ -6,14 +6,13 @@ import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
 import io.github.mainstringargs.domain.polygon.historicquotes.HistoricQuote;
 import io.github.mainstringargs.domain.polygon.historictrades.HistoricTrade;
 import io.github.mainstringargs.polygon.PolygonAPI;
-import io.github.mainstringargs.polygon.enums.Timespan;
+import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.alpacajavabacktest.data.iterators.AggregateIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.Iterator;
 
 /**
  * Used for querying and caching data from <a href="https://polygon.io/">Polygon</a> and
@@ -21,9 +20,9 @@ import java.util.Iterator;
  */
 public class BacktestData {
 
-    public static final String TICKER_AGGREGATES_FILE_EXTENSION = "aggregates.json";
-    public static final String TICKER_TRADES_FILE_EXTENSION = "trades.json";
-    public static final String TICKER_QUOTES_FILE_EXTENSION = "quotes.json";
+    public static final String AGGREGATES_FILE_EXTENSION = "aggregates.json";
+    public static final String TRADES_FILE_EXTENSION = "trades.json";
+    public static final String QUOTES_FILE_EXTENSION = "quotes.json";
     public static final String BACKTEST_FILES_DIRECTORY_NAME = ".alpacajavabacktest";
     public static final String DATA_DIRECTORY_NAME = "data";
 
@@ -31,11 +30,11 @@ public class BacktestData {
 
     private final AlpacaAPI alpacaAPI;
     private final PolygonAPI polygonAPI;
-    private File tickerCacheDirectory;
+    private File dataCacheDirectory;
     private boolean persistentCacheEnabled;
 
     /**
-     * Instantiates a new Ticker data with <code>System.getProperty("user.home")</code> as the caching directory.
+     * Instantiates a new Backtest data with <code>System.getProperty("user.home")</code> as the caching directory.
      *
      * @param alpacaAPI  the alpaca api
      * @param polygonAPI the polygon api
@@ -46,18 +45,18 @@ public class BacktestData {
     }
 
     /**
-     * Instantiates a new Ticker data.
+     * Instantiates a new Backtest data.
      *
      * @param alpacaAPI              the alpaca api
      * @param polygonAPI             the polygon api
-     * @param tickerCacheDirectory   the ticker cache directory
+     * @param dataCacheDirectory     the data cache directory
      * @param persistentCacheEnabled the persistent cache enabled
      */
-    public BacktestData(AlpacaAPI alpacaAPI, PolygonAPI polygonAPI, File tickerCacheDirectory,
+    public BacktestData(AlpacaAPI alpacaAPI, PolygonAPI polygonAPI, File dataCacheDirectory,
             boolean persistentCacheEnabled) {
         this.alpacaAPI = alpacaAPI;
         this.polygonAPI = polygonAPI;
-        this.tickerCacheDirectory = tickerCacheDirectory;
+        this.dataCacheDirectory = dataCacheDirectory;
         this.persistentCacheEnabled = persistentCacheEnabled;
     }
 
@@ -65,16 +64,17 @@ public class BacktestData {
      * Provides an iterable for Aggregate data on a ticker. This will fetch data from Polygon if it doesn't exist on the
      * cache (or if the cache is disabled).
      *
-     * @param ticker   the ticker
-     * @param timespan the timespan
-     * @param from     the from LocalDate (inclusive)
-     * @param to       the to LocalDate (exclusive)
+     * @param ticker              the ticker
+     * @param aggregateUpdateType the aggregate update type
+     * @param from                the from LocalDate (inclusive)
+     * @param to                  the to LocalDate (exclusive)
      *
      * @return the aggregates
      */
-    public Iterable<Aggregate> getAggregates(String ticker, Timespan timespan, LocalDate from, LocalDate to) {
+    public Iterable<Aggregate> getAggregates(String ticker, AggregateUpdateType aggregateUpdateType, LocalDate from,
+            LocalDate to) {
         synchronized (BacktestData.class) {
-            return () -> new AggregateIterator(this, ticker, timespan, from, to);
+            return () -> new AggregateIterator(this, ticker, aggregateUpdateType, from, to);
         }
     }
 
@@ -86,9 +86,9 @@ public class BacktestData {
      * @param from   the from LocalDate
      * @param to     the to LocalDate
      *
-     * @return ticker trade iterator
+     * @return the trades
      */
-    public Iterator<HistoricTrade> getTickerTrades(String ticker, LocalDate from, LocalDate to) {
+    public Iterable<HistoricTrade> getTrades(String ticker, LocalDate from, LocalDate to) {
         synchronized (BacktestData.class) {
 
         }
@@ -103,9 +103,9 @@ public class BacktestData {
      * @param from   the from LocalDate
      * @param to     the to LocalDate
      *
-     * @return ticker quotes iterator
+     * @return the quotes
      */
-    public Iterator<HistoricQuote> getTickerQuotes(String ticker, LocalDate from, LocalDate to) {
+    public Iterable<HistoricQuote> getQuotes(String ticker, LocalDate from, LocalDate to) {
         synchronized (BacktestData.class) {
 
         }
@@ -121,7 +121,7 @@ public class BacktestData {
      *
      * @return the calendar
      */
-    public Iterator<Calendar> getCalendar(LocalDate from, LocalDate to) {
+    public Iterable<Calendar> getCalendar(LocalDate from, LocalDate to) {
         synchronized (BacktestData.class) {
 
         }
@@ -129,18 +129,18 @@ public class BacktestData {
     }
 
     /**
-     * Gets data file with the following format: cached_directory/ticker_name/YYYY-MM-DD.timespan.extension
+     * Gets data file with the following format: cached_directory/ticker_name/YYYY-MM-DD.AggregateUpdateType.extension
      *
-     * @param ticker    the ticker
-     * @param date      the date
-     * @param timespan  the timespan (null to not include)
-     * @param extension the extension
+     * @param ticker              the ticker
+     * @param date                the date
+     * @param aggregateUpdateType the aggregate update type (null to not include)
+     * @param extension           the extension
      *
      * @return the data file
      */
-    public File getDataFile(String ticker, LocalDate date, Timespan timespan, String extension) {
-        return new File(tickerCacheDirectory, ticker + "/" + date.toString() + "." +
-                (timespan == null ? "" : timespan.getAPIName() + ".") + extension);
+    public File getDataFile(String ticker, LocalDate date, AggregateUpdateType aggregateUpdateType, String extension) {
+        return new File(dataCacheDirectory, ticker + "/" + date.toString() + "." +
+                (aggregateUpdateType == null ? "" : aggregateUpdateType.name().toLowerCase() + ".") + extension);
     }
 
     /**
@@ -162,21 +162,21 @@ public class BacktestData {
     }
 
     /**
-     * Gets ticker cache directory.
+     * Gets data cache directory.
      *
-     * @return the ticker cache directory
+     * @return the data cache directory
      */
-    public File getTickerCacheDirectory() {
-        return tickerCacheDirectory;
+    public File getDataCacheDirectory() {
+        return dataCacheDirectory;
     }
 
     /**
-     * Sets ticker cache directory.
+     * Sets data cache directory.
      *
-     * @param tickerCacheDirectory the ticker cache directory
+     * @param dataCacheDirectory the data cache directory
      */
-    public void setTickerCacheDirectory(File tickerCacheDirectory) {
-        this.tickerCacheDirectory = tickerCacheDirectory;
+    public void setDataCacheDirectory(File dataCacheDirectory) {
+        this.dataCacheDirectory = dataCacheDirectory;
     }
 
     /**
