@@ -1,5 +1,7 @@
 package net.jacobpeterson.alpacajavabacktest.data.iterators;
 
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
 import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
@@ -25,9 +27,11 @@ public class AggregateIterator implements Iterator<Aggregate> {
     private final String ticker;
     private final AggregateUpdateType aggregateUpdateType;
     private final ArrayList<LocalDate> dates;
-    private final ArrayList<LocalDate> datesToBeFetched;
-    private final HashMap<LocalDate, File> datesCachedFiles;
+    private final HashMap<LocalDate, Aggregate> datesFetchedCache;
+    private final HashMap<LocalDate, File> datesFilesCached;
     private int currentDateIndex;
+    private JsonReader currentFileReader;
+    private JsonWriter currentFileWriter;
 
     /**
      * Instantiates a new Aggregate iterator.
@@ -43,9 +47,9 @@ public class AggregateIterator implements Iterator<Aggregate> {
         this.backtestData = backtestData;
         this.ticker = ticker;
         this.aggregateUpdateType = aggregateUpdateType;
-        this.dates = TimeUtil.getDateIntervals(aggregateUpdateType, from, to);
-        this.datesToBeFetched = new ArrayList<>();
-        this.datesCachedFiles = new HashMap<>();
+        this.dates = TimeUtil.getAggregateDateIntervals(aggregateUpdateType, from, to);
+        this.datesFetchedCache = new HashMap<>();
+        this.datesFilesCached = new HashMap<>();
         this.currentDateIndex = 0;
 
         this.populateDatesLists();
@@ -56,16 +60,16 @@ public class AggregateIterator implements Iterator<Aggregate> {
      */
     private void populateDatesLists() {
         if (!backtestData.isPersistentCacheEnabled()) {
-            datesToBeFetched.addAll(dates);
+            dates.forEach(localDate -> datesFetchedCache.put(localDate, null));
         } else {
             for (LocalDate dayDate : dates) {
                 File dayCachedFile = backtestData.getDataFile(ticker, dayDate, aggregateUpdateType,
                         BacktestData.AGGREGATES_FILE_EXTENSION);
 
                 if (dayCachedFile.exists()) {
-                    datesCachedFiles.put(dayDate, dayCachedFile);
+                    datesFilesCached.put(dayDate, dayCachedFile);
                 } else {
-                    datesToBeFetched.add(dayDate);
+                    datesFetchedCache.put(dayDate, null);
                 }
             }
         }
@@ -73,7 +77,7 @@ public class AggregateIterator implements Iterator<Aggregate> {
 
     @Override
     public boolean hasNext() {
-        return dates.size() == currentDateIndex - 1;
+        return currentDateIndex - 1 != dates.size();
     }
 
     @Override

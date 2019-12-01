@@ -16,8 +16,8 @@ public class TimeUtil {
      *
      * @return the iterable
      */
-    public static ArrayList<LocalDate> getDateIntervals(AggregateUpdateType aggregateUpdateType, LocalDate from,
-            LocalDate to) {
+    public static ArrayList<LocalDate> getAggregateDateIntervals(AggregateUpdateType aggregateUpdateType,
+            LocalDate from, LocalDate to) {
         ArrayList<LocalDate> dayDates = new ArrayList<>();
         LocalDate currentDate = from.plusDays(0); // Make a copy
 
