@@ -1,14 +1,11 @@
-package net.jacobpeterson.alpacajavabacktest.algorithm.update;
+package net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker;
+
+import net.jacobpeterson.alpacajavabacktest.algorithm.update.TickerUpdateType;
 
 /**
- * The enum Aggregate update type.
+ * The type Aggregate update type.
  */
-public enum AggregateUpdateType {
-
-    /**
-     * Second aggregate update type.
-     */
-    SECOND,
+public enum AggregateUpdateType implements TickerUpdateType {
 
     /**
      * Minute aggregate update type.
