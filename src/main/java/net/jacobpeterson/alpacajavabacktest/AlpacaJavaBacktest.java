@@ -7,7 +7,7 @@ import net.jacobpeterson.alpacajavabacktest.algorithm.update.OtherUpdateType;
 import net.jacobpeterson.alpacajavabacktest.algorithm.update.TickerUpdateType;
 import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
-import net.jacobpeterson.alpacajavabacktest.data.BacktestRecord;
+import net.jacobpeterson.alpacajavabacktest.website.BacktestWebsite;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -22,26 +22,30 @@ import java.util.HashMap;
  * for Polygon to use this backtesting library. This Library uses
  * <a href="https://github.com/mainstringargs/alpaca-java">alpaca-java</a> exclusively as it contains
  * a Polygon Java API and useful POJO classes.
+ * <p>
+ * Most things that should be thread safe in this library are thread safe so feel free to instantiate multiple instances
+ * of this object and run backtests on any number of threads to speed up the backtest process.
  */
 public class AlpacaJavaBacktest {
 
     private final BacktestData backtestData;
     private final BacktestBroker backtestBroker;
-    private final BacktestRecord backtestRecord;
+    private final BacktestWebsite backtestWebsite;
+    private final HashMap<String, TickerUpdateType[]> tickerUpdateTypes;
+    private final ArrayList<OtherUpdateType> otherUpdateTypes;
     private ZonedDateTime from;
     private ZonedDateTime to;
-    private HashMap<String, TickerUpdateType[]> tickerUpdateTypes;
-    private ArrayList<OtherUpdateType> otherUpdateTypes;
 
     /**
-     * Instantiates a new Alpaca java backtest.
+     * Instantiates a new Alpaca java backtest and creates new {@link AlpacaAPI} and {@link PolygonAPI} instances with
+     * their default constructors.
      */
     public AlpacaJavaBacktest() {
         this(new AlpacaAPI(), new PolygonAPI());
     }
 
     /**
-     * Instantiates a new AlpacaJavaBacktest.
+     * Instantiates a new AlpacaJavaBacktest with {@link AlpacaAPI} and {@link PolygonAPI}.
      *
      * @param alpacaAPI  the alpaca api
      * @param polygonAPI the polygon api
@@ -68,8 +72,7 @@ public class AlpacaJavaBacktest {
     public AlpacaJavaBacktest(BacktestData backtestData, BacktestBroker backtestBroker) {
         this.backtestData = backtestData;
         this.backtestBroker = backtestBroker;
-        this.backtestRecord = new BacktestRecord();
-
+        this.backtestWebsite = new BacktestWebsite(this);
         this.tickerUpdateTypes = new HashMap<>();
         this.otherUpdateTypes = new ArrayList<>();
     }
@@ -85,6 +88,13 @@ public class AlpacaJavaBacktest {
 
         tradingAlgorithm.init();
 
+        // TODO
+    }
+
+    /**
+     * Shutdown this backtest (e.g. halt backtest, shutdown website, etc.).
+     */
+    public void shutdown() {
         // TODO
     }
 

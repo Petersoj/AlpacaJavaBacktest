@@ -10,6 +10,7 @@ import net.jacobpeterson.alpacajavabacktest.algorithm.update.other.MarketEventUp
 import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
 import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
+import net.jacobpeterson.alpacajavabacktest.website.BacktestWebsite;
 
 import java.time.ZonedDateTime;
 
@@ -24,6 +25,7 @@ public abstract class TradingAlgorithm {
 
     protected BacktestData backtestData;
     protected BacktestBroker backtestBroker;
+    protected BacktestWebsite backtestWebsite;
 
     /**
      * This method is executed before a backtest is executed. You'll then have access to {@link #getBacktestBroker()}
@@ -113,5 +115,23 @@ public abstract class TradingAlgorithm {
      */
     public final void setBacktestBroker(BacktestBroker backtestBroker) {
         this.backtestBroker = backtestBroker;
+    }
+
+    /**
+     * Gets backtest website.
+     *
+     * @return the backtest website
+     */
+    public final BacktestWebsite getBacktestWebsite() {
+        return backtestWebsite;
+    }
+
+    /**
+     * Sets backtest website.
+     *
+     * @param backtestWebsite the backtest website
+     */
+    public final void setBacktestWebsite(BacktestWebsite backtestWebsite) {
+        this.backtestWebsite = backtestWebsite;
     }
 }

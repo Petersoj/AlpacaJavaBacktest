@@ -59,18 +59,14 @@ public class AggregateIterator implements Iterator<Aggregate> {
      * Populate dates lists.
      */
     private void populateDatesLists() {
-        if (!backtestData.isPersistentCacheEnabled()) {
-            dates.forEach(localDate -> datesFetchedCache.put(localDate, null));
-        } else {
-            for (LocalDate dayDate : dates) {
-                File dayCachedFile = backtestData.getDataFile(ticker, dayDate, aggregateUpdateType,
-                        BacktestData.AGGREGATES_FILE_EXTENSION);
+        for (LocalDate dayDate : dates) {
+            File dayCachedFile = backtestData.getDataFile(ticker, dayDate, aggregateUpdateType,
+                    BacktestData.AGGREGATES_FILE_EXTENSION);
 
-                if (dayCachedFile.exists()) {
-                    datesFilesCached.put(dayDate, dayCachedFile);
-                } else {
-                    datesFetchedCache.put(dayDate, null);
-                }
+            if (dayCachedFile.exists()) {
+                datesFilesCached.put(dayDate, dayCachedFile);
+            } else {
+                datesFetchedCache.put(dayDate, null);
             }
         }
     }

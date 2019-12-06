@@ -7,7 +7,6 @@ import io.github.mainstringargs.domain.polygon.historicquotes.HistoricQuote;
 import io.github.mainstringargs.domain.polygon.historictrades.HistoricTrade;
 import io.github.mainstringargs.polygon.PolygonAPI;
 import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
-import net.jacobpeterson.alpacajavabacktest.data.iterators.AggregateIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,47 +16,47 @@ import java.time.LocalDate;
 /**
  * Used for querying and caching data from <a href="https://polygon.io/">Polygon</a> and
  * <a href="https://alpaca.markets">Alpaca</a>.
+ * <p>
+ * This is completely thread safe!
  */
 public class BacktestData {
 
     public static final String AGGREGATES_FILE_EXTENSION = "aggregates.json";
     public static final String TRADES_FILE_EXTENSION = "trades.json";
     public static final String QUOTES_FILE_EXTENSION = "quotes.json";
-    public static final String BACKTEST_FILES_DIRECTORY_NAME = ".alpacajavabacktest";
-    public static final String DATA_DIRECTORY_NAME = "data";
+    public static final String BACKTEST_DATA_DIRECTORY_NAME = ".alpacajavabacktest";
+    public static final String DATA_CACHE_DIRECTORY_NAME = "data_cache";
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     private final AlpacaAPI alpacaAPI;
     private final PolygonAPI polygonAPI;
-    private File dataCacheDirectory;
-    private boolean persistentCacheEnabled;
+    private final File backtestDataDirectory;
+    private final File dataCacheDirectory;
 
     /**
-     * Instantiates a new Backtest data with <code>System.getProperty("user.home")</code> as the caching directory.
+     * Instantiates a new Backtest data with <code>System.getProperty("user.home")</code> as the data directory.
      *
      * @param alpacaAPI  the alpaca api
      * @param polygonAPI the polygon api
      */
     public BacktestData(AlpacaAPI alpacaAPI, PolygonAPI polygonAPI) {
-        this(alpacaAPI, polygonAPI, new File(System.getProperty("user.home"),
-                BACKTEST_FILES_DIRECTORY_NAME + "/" + DATA_DIRECTORY_NAME), true);
+        this(alpacaAPI, polygonAPI, new File(System.getProperty("user.home"), BACKTEST_DATA_DIRECTORY_NAME));
     }
 
     /**
      * Instantiates a new Backtest data.
      *
-     * @param alpacaAPI              the alpaca api
-     * @param polygonAPI             the polygon api
-     * @param dataCacheDirectory     the data cache directory
-     * @param persistentCacheEnabled the persistent cache enabled
+     * @param alpacaAPI             the alpaca api
+     * @param polygonAPI            the polygon api
+     * @param backtestDataDirectory the backtest data directory (null to use a temporary directory)
      */
-    public BacktestData(AlpacaAPI alpacaAPI, PolygonAPI polygonAPI, File dataCacheDirectory,
-            boolean persistentCacheEnabled) {
+    public BacktestData(AlpacaAPI alpacaAPI, PolygonAPI polygonAPI, File backtestDataDirectory) {
         this.alpacaAPI = alpacaAPI;
         this.polygonAPI = polygonAPI;
-        this.dataCacheDirectory = dataCacheDirectory;
-        this.persistentCacheEnabled = persistentCacheEnabled;
+        this.backtestDataDirectory = backtestDataDirectory == null ?
+                new File(System.getProperty("java.io.tmpdir"), BACKTEST_DATA_DIRECTORY_NAME) : backtestDataDirectory;
+        this.dataCacheDirectory = new File(backtestDataDirectory, DATA_CACHE_DIRECTORY_NAME);
     }
 
     /**
@@ -73,9 +72,7 @@ public class BacktestData {
      */
     public Iterable<Aggregate> getAggregates(String ticker, AggregateUpdateType aggregateUpdateType, LocalDate from,
             LocalDate to) {
-        synchronized (BacktestData.class) {
-            return () -> new AggregateIterator(this, ticker, aggregateUpdateType, from, to);
-        }
+        return null;
     }
 
     /**
@@ -89,9 +86,6 @@ public class BacktestData {
      * @return the trades
      */
     public Iterable<HistoricTrade> getTrades(String ticker, LocalDate from, LocalDate to) {
-        synchronized (BacktestData.class) {
-
-        }
         return null;
     }
 
@@ -106,9 +100,6 @@ public class BacktestData {
      * @return the quotes
      */
     public Iterable<HistoricQuote> getQuotes(String ticker, LocalDate from, LocalDate to) {
-        synchronized (BacktestData.class) {
-
-        }
         return null;
     }
 
@@ -122,14 +113,11 @@ public class BacktestData {
      * @return the calendar
      */
     public Iterable<Calendar> getCalendar(LocalDate from, LocalDate to) {
-        synchronized (BacktestData.class) {
-
-        }
         return null;
     }
 
     /**
-     * Gets data file with the following format: cached_directory/ticker_name/YYYY-MM-DD.AggregateUpdateType.extension
+     * Gets data file with the following format: cache_directory/ticker_name/YYYY-MM-DD.AggregateUpdateType.extension
      *
      * @param ticker              the ticker
      * @param date                the date
@@ -139,7 +127,7 @@ public class BacktestData {
      * @return the data file
      */
     public File getDataFile(String ticker, LocalDate date, AggregateUpdateType aggregateUpdateType, String extension) {
-        return new File(dataCacheDirectory, ticker + "/" + date.toString() + "." +
+        return new File(dataCacheDirectory, ticker + File.separator + date.toString() + "." +
                 (aggregateUpdateType == null ? "" : aggregateUpdateType.name().toLowerCase() + ".") + extension);
     }
 
@@ -162,38 +150,20 @@ public class BacktestData {
     }
 
     /**
+     * Gets backtest data directory.
+     *
+     * @return the backtest data directory
+     */
+    public File getBacktestDataDirectory() {
+        return backtestDataDirectory;
+    }
+
+    /**
      * Gets data cache directory.
      *
      * @return the data cache directory
      */
     public File getDataCacheDirectory() {
         return dataCacheDirectory;
-    }
-
-    /**
-     * Sets data cache directory.
-     *
-     * @param dataCacheDirectory the data cache directory
-     */
-    public void setDataCacheDirectory(File dataCacheDirectory) {
-        this.dataCacheDirectory = dataCacheDirectory;
-    }
-
-    /**
-     * Is persistent cache enabled boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isPersistentCacheEnabled() {
-        return persistentCacheEnabled;
-    }
-
-    /**
-     * Sets persistent cache enabled.
-     *
-     * @param persistentCacheEnabled the persistent cache enabled
-     */
-    public void setPersistentCacheEnabled(boolean persistentCacheEnabled) {
-        this.persistentCacheEnabled = persistentCacheEnabled;
     }
 }
