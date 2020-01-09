@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.util;
+package net.jacobpeterson.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

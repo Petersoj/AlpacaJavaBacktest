@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.algorithm.update;
+package net.jacobpeterson.algorithm.update;
 
 /**
  * The type Update type.

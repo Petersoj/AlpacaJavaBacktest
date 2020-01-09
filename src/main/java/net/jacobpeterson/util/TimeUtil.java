@@ -1,6 +1,6 @@
-package net.jacobpeterson.alpacajavabacktest.util;
+package net.jacobpeterson.util;
 
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
+import net.jacobpeterson.algorithm.update.ticker.AggregateUpdateType;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

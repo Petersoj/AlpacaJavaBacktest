@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.website;
+package net.jacobpeterson.website;
 
 import java.awt.Color;
 import java.time.LocalDateTime;

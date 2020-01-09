@@ -1,13 +1,13 @@
-package net.jacobpeterson.alpacajavabacktest;
+package net.jacobpeterson;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.polygon.PolygonAPI;
-import net.jacobpeterson.alpacajavabacktest.algorithm.TradingAlgorithm;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.OtherUpdateType;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.TickerUpdateType;
-import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
-import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
-import net.jacobpeterson.alpacajavabacktest.website.BacktestWebsite;
+import net.jacobpeterson.algorithm.TradingAlgorithm;
+import net.jacobpeterson.algorithm.update.OtherUpdateType;
+import net.jacobpeterson.algorithm.update.TickerUpdateType;
+import net.jacobpeterson.broker.BacktestBroker;
+import net.jacobpeterson.data.BacktestData;
+import net.jacobpeterson.website.BacktestWebsite;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;

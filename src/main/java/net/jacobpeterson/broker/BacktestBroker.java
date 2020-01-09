@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.broker;
+package net.jacobpeterson.broker;
 
 import io.github.mainstringargs.alpaca.enums.OrderSide;
 import io.github.mainstringargs.alpaca.enums.OrderTimeInForce;
@@ -6,7 +6,7 @@ import io.github.mainstringargs.alpaca.enums.OrderType;
 import io.github.mainstringargs.domain.alpaca.account.Account;
 import io.github.mainstringargs.domain.alpaca.order.Order;
 import io.github.mainstringargs.domain.alpaca.position.Position;
-import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
+import net.jacobpeterson.data.BacktestData;
 
 import java.util.ArrayList;
 

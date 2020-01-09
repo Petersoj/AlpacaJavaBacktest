@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.data;
+package net.jacobpeterson.data;
 
 /**
  * The type Backtest record. Used to record/index a backtest.

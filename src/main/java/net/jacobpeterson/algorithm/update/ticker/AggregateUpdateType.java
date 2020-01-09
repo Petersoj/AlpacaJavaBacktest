@@ -1,6 +1,6 @@
-package net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker;
+package net.jacobpeterson.algorithm.update.ticker;
 
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.TickerUpdateType;
+import net.jacobpeterson.algorithm.update.TickerUpdateType;
 
 /**
  * The type Aggregate update type.

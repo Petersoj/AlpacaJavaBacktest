@@ -1,4 +1,4 @@
-package net.jacobpeterson.alpacajavabacktest.data;
+package net.jacobpeterson.data;
 
 import io.github.mainstringargs.alpaca.AlpacaAPI;
 import io.github.mainstringargs.domain.alpaca.calendar.Calendar;
@@ -6,7 +6,7 @@ import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
 import io.github.mainstringargs.domain.polygon.historicquotes.HistoricQuote;
 import io.github.mainstringargs.domain.polygon.historictrades.HistoricTrade;
 import io.github.mainstringargs.polygon.PolygonAPI;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
+import net.jacobpeterson.algorithm.update.ticker.AggregateUpdateType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

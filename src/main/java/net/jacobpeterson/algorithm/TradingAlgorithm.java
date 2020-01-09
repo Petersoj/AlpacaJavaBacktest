@@ -1,16 +1,16 @@
-package net.jacobpeterson.alpacajavabacktest.algorithm;
+package net.jacobpeterson.algorithm;
 
 import io.github.mainstringargs.domain.alpaca.websocket.account.AccountUpdate;
 import io.github.mainstringargs.domain.alpaca.websocket.trade.TradeUpdate;
 import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
 import io.github.mainstringargs.domain.polygon.historicquotes.HistoricQuote;
 import io.github.mainstringargs.domain.polygon.historictrades.HistoricTrade;
-import net.jacobpeterson.alpacajavabacktest.AlpacaJavaBacktest;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.other.MarketEventUpdateType;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
-import net.jacobpeterson.alpacajavabacktest.broker.BacktestBroker;
-import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
-import net.jacobpeterson.alpacajavabacktest.website.BacktestWebsite;
+import net.jacobpeterson.AlpacaJavaBacktest;
+import net.jacobpeterson.algorithm.update.other.MarketEventUpdateType;
+import net.jacobpeterson.algorithm.update.ticker.AggregateUpdateType;
+import net.jacobpeterson.broker.BacktestBroker;
+import net.jacobpeterson.data.BacktestData;
+import net.jacobpeterson.website.BacktestWebsite;
 
 import java.time.ZonedDateTime;
 

@@ -1,6 +1,6 @@
-package net.jacobpeterson.alpacajavabacktest.website;
+package net.jacobpeterson.website;
 
-import net.jacobpeterson.alpacajavabacktest.AlpacaJavaBacktest;
+import net.jacobpeterson.AlpacaJavaBacktest;
 
 import java.util.ArrayList;
 

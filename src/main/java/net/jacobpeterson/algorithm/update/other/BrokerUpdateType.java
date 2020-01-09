@@ -1,6 +1,6 @@
-package net.jacobpeterson.alpacajavabacktest.algorithm.update.other;
+package net.jacobpeterson.algorithm.update.other;
 
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.OtherUpdateType;
+import net.jacobpeterson.algorithm.update.OtherUpdateType;
 
 /**
  * The enum Broker update type.

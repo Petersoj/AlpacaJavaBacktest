@@ -1,11 +1,11 @@
-package net.jacobpeterson.alpacajavabacktest.data.iterators;
+package net.jacobpeterson.data.iterators;
 
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import io.github.mainstringargs.domain.polygon.aggregates.Aggregate;
-import net.jacobpeterson.alpacajavabacktest.algorithm.update.ticker.AggregateUpdateType;
-import net.jacobpeterson.alpacajavabacktest.data.BacktestData;
-import net.jacobpeterson.alpacajavabacktest.util.TimeUtil;
+import net.jacobpeterson.algorithm.update.ticker.AggregateUpdateType;
+import net.jacobpeterson.data.BacktestData;
+import net.jacobpeterson.util.TimeUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
