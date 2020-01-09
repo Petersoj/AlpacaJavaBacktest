@@ -8,10 +8,10 @@ AlpacaJavaBacktest is a simple and fast Stock Trading Algorithm Backtesting Libr
 ## To-Do
 * Finish 1.0
   * Fetching and caching data via BacktestData
-  * Running a backtest with record
-  * Internal website that hosts interactive charts via [Plotly](https://plot.ly/javascript/) for P&L charts, comparison of SPX, executed trades displayed on graph, etc.
+  * Running a backtest
+  * Internal website that hosts interactive charts via [React Stockcharts](https://github.com/rrag/react-stockcharts), shows backtest info, aggregates/quotes/trades of a ticker, date range picker via [React Daterange Picker](https://github.com/wojtekmaj/react-daterange-picker), etc.
+* Implement Time updates (e.g. every minute, hour, or day update) 
 * Allow for parallel backtests
 * Save/Load previous backtests to display on website
 * Historical ETB and HTB ticker data
-* Implement Time updates (e.g. every minute, hour, or day update)
 * More stats (like shown in the 'stats' output [here](http://pmorissette.github.io/bt/index.html#a-quick-example))
