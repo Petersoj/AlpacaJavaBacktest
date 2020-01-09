@@ -20,7 +20,8 @@ repositories {
 dependencies {
     compile group: 'io.github.mainstringargs', name: 'alpaca-java', version: '5.0.2'
     compile group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.29'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -30,6 +31,10 @@ test {
     }
 }
 
-build.finalizedBy(publishToMavenLocal)
+sourceSets {
+    test {
+        resources.srcDirs = ["src/test/resources"]
+    }
+}
 
-mainClassName = "net.jacobpeterson.AlpacaJavaBacktest"
+build.finalizedBy(publishToMavenLocal)
