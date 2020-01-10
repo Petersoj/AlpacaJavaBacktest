@@ -3,5 +3,6 @@ build/
 out/
 .idea/
 .gradle/
+node_modules/
 alpaca.properties
 polygon.properties

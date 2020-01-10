@@ -1,11 +1,13 @@
 package net.jacobpeterson.playground;
 
-import io.github.mainstringargs.polygon.PolygonAPI;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.junit.Test;
+
+import static spark.Spark.init;
+import static spark.Spark.staticFileLocation;
 
 /**
  * This class is used for manual/playground testing purposes.
@@ -23,7 +25,9 @@ public class PlaygroundTest {
 
     @Test
     public void playgroundTest() throws Exception {
-        PolygonAPI polygonAPI = new PolygonAPI();
-        LOGGER.info(polygonAPI.getLastQuote("AAPL").toString().replace(",", ",\n\t"));
+        staticFileLocation("/");
+        init();
+
+        Thread.sleep(Long.MAX_VALUE);
     }
 }

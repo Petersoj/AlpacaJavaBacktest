@@ -1,0 +1,22 @@
+{
+  "name": "net.jacobpeterson.alpaca-java-backtest",
+  "version": "1.0.0",
+  "description": "A web interface for AlpacaJavaBacktest",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node dist.js",
+    "dist": "node dist.js"
+  },
+  "author": "Jacob Peterson",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^13.1.6",
+    "browserify": "^16.5.0",
+    "tsify": "^4.0.1",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "uniq": "^1.0.1"
+  }
+}
