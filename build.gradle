@@ -40,22 +40,28 @@ test {
 
 sourceSets {
     main {
-        resources.srcDirs = ["src/main/resources"]
+        java {
+            srcDirs = ["src/main/java"]
+        }
+        resources {
+            srcDirs = ["src/main/resources"]
+        }
     }
 
     test {
-        resources.srcDirs = ["src/test/resources"]
-    }
-
-    build {
-        resources.srcDirs = ["src/main/resources"]
+        java {
+            srcDirs = ["src/test/java"]
+        }
+        resources {
+            srcDirs = ["src/test/resources"]
+        }
     }
 }
 
 
 task buildSite(type: BuildSiteTask) {
-    inputDir = file("site")
-    outputDir = file("$buildDir/site")
+    siteDir = file("site")
+    distDir = file("$buildDir/site")
 }
 
 processResources {
