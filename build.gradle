@@ -1,3 +1,5 @@
+import net.jacobpeterson.BuildSiteTask
+
 plugins {
     id 'java'
     id 'application'
@@ -12,40 +14,56 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
+mainClassName = "net.jacobpeterson.AlpacaJavaBacktest"
+
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
-    compile group: 'io.github.mainstringargs', name: 'alpaca-java', version: '5.0.2'
-    compile group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.0'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'io.github.mainstringargs', name: 'alpaca-java', version: '5.0.2'
+    implementation group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.0'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
 test {
     testLogging {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
+
+    exclude "net/jacobpeterson/playground/**"
 }
 
 sourceSets {
+    main {
+        resources.srcDirs = ["src/main/resources"]
+    }
+
     test {
         resources.srcDirs = ["src/test/resources"]
     }
 
-    main {
-        resources.srcDirs = ["src/test/resources"]
+    build {
+        resources.srcDirs = ["src/main/resources"]
     }
 }
 
-processResources {
-    from "./site/dist/"
+
+task buildSite(type: BuildSiteTask) {
+    inputDir = file("site")
+    outputDir = file("$buildDir/site")
 }
 
-build.finalizedBy(publishToMavenLocal)
+processResources {
+    dependsOn buildSite
+    from "$buildDir/site"
+}
 
-mainClassName = "net.jacobpeterson.AlpacaJavaBacktest"
+build {
+    dependsOn processResources
+    finalizedBy publishToMavenLocal
+}
