@@ -21,7 +21,7 @@ import java.nio.file.StandardCopyOption
  *     <ul>
  *         <li>assets</li>
  *         <li>scss</li>
- *         <li>ts</li>
+ *         <li>js</li>
  *         <li>index.html</li>
  *     </ul>
  *     <li>node_modules/</li>
@@ -60,7 +60,7 @@ abstract class BuildSiteTask extends DefaultTask {
     def sourceDir = siteDir.dir("src")
     File sourceAssetsDir
     File sourceSCSSDir
-    File sourceTSDir
+    File sourceJSDir
 
     File distAssetsDir
     File distCSSDir
@@ -83,25 +83,25 @@ abstract class BuildSiteTask extends DefaultTask {
         buildAssets(inputChanges)
         buildHTML(inputChanges)
         buildSCSS(inputChanges)
-        buildTS(inputChanges)
+        buildJS(inputChanges)
     }
 
     protected void initialize() {
         sourceAssetsDir = sourceDir.get().dir("assets").getAsFile()
         sourceSCSSDir = sourceDir.get().dir("scss").getAsFile()
-        sourceTSDir = sourceDir.get().dir("ts").getAsFile()
+        sourceJSDir = sourceDir.get().dir("js").getAsFile()
 
         distAssetsDir = distDir.get().dir("assets").getAsFile()
         distCSSDir = distDir.get().dir("css").getAsFile()
         distJSDir = distDir.get().dir("js").getAsFile()
 
         nodeModulesDir = siteDir.dir("node_modules").get().getAsFile()
-        standardExcludedFiles = (File[]) ["node_modules", "package.json", "package-lock.json", "tsconfig.json"]
+        standardExcludedFiles = (File[]) ["node_modules", "package.json", "package-lock.json"]
                 .stream().map({ filePath -> new File(siteDir.get().getAsFile(), filePath) }).toArray()
     }
 
     protected void checkFileTree() {
-        final def requiredFiles = [sourceAssetsDir, sourceSCSSDir, sourceTSDir, nodeModulesDir,
+        final def requiredFiles = [sourceAssetsDir, sourceSCSSDir, sourceJSDir, nodeModulesDir,
                                    siteDir.file("package.json").get().getAsFile()]
 
         File[] fileTreeDepth2 = (File[]) Files.walk(siteDir.getAsFile().get().toPath(), 2)
@@ -126,7 +126,7 @@ abstract class BuildSiteTask extends DefaultTask {
     }
 
     protected checkNodeJS() {
-        final def requiredPackages = ["typescript", "browserify", "tsify", "node-sass"]
+        final def requiredPackages = ["browserify", "node-sass", "@babel/core", "babelify"]
 
         executeCommand("node", "-v").eachLine { line -> logger.log(LogLevel.INFO, "NodeJS version: " + line) }
         executeCommand("npm", "-v").eachLine { line -> logger.log(LogLevel.INFO, "npm version: " + line) }
@@ -247,7 +247,7 @@ abstract class BuildSiteTask extends DefaultTask {
         }
     }
 
-    protected buildTS(InputChanges inputChanges) {
+    protected buildJS(InputChanges inputChanges) {
         def fileChanges = inputChanges.getFileChanges(siteDir)
 
         if (fileChanges.size() > 0) {
@@ -255,7 +255,8 @@ abstract class BuildSiteTask extends DefaultTask {
 
             logger.log(LogLevel.INFO, "Executing Browserify: ")
 
-            executeCommand("npx", "browserify", sourceTSDir.getAbsolutePath(), "-p", "[tsify]",
+            executeCommand("npx", "browserify", sourceJSDir.getAbsolutePath(),
+                    "-t", "[babelify", "--presets", "[@babel/preset-env", "@babel/preset-react]", "]",
                     "-o", new File(distJSDir, "bundle.js").getAbsolutePath())
                     .eachLine { line -> logger.log(LogLevel.INFO, "\t" + line) }
 
