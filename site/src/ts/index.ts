@@ -16,4 +16,4 @@ export class Dog {
     }
 }
 
-alert(new Dog("asdf").getName());
+alert(new Dog("asdf").getName() + " " +  unique(data));

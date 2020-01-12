@@ -35,7 +35,10 @@ test {
         events "passed", "skipped", "failed", "standardOut", "standardError"
     }
 
-    exclude "net/jacobpeterson/playground/**"
+    // To run the playground test package: ./gradlew test -PincludePlaygroundTest
+    if (!project.hasProperty("includePlaygroundTest")) {
+        exclude "net/jacobpeterson/playground/**"
+    }
 }
 
 sourceSets {
