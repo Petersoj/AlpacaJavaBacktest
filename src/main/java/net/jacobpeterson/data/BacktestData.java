@@ -55,7 +55,8 @@ public class BacktestData {
         this.alpacaAPI = alpacaAPI;
         this.polygonAPI = polygonAPI;
         this.backtestDataDirectory = backtestDataDirectory == null ?
-                new File(System.getProperty("java.io.tmpdir"), BACKTEST_DATA_DIRECTORY_NAME) : backtestDataDirectory;
+                                     new File(System.getProperty("java.io.tmpdir"), BACKTEST_DATA_DIRECTORY_NAME) :
+                                     backtestDataDirectory;
         this.dataCacheDirectory = new File(backtestDataDirectory, DATA_CACHE_DIRECTORY_NAME);
     }
 
@@ -71,7 +72,7 @@ public class BacktestData {
      * @return the aggregates
      */
     public Iterable<Aggregate> getAggregates(String ticker, AggregateUpdateType aggregateUpdateType, LocalDate from,
-            LocalDate to) {
+                                             LocalDate to) {
         return null;
     }
 
@@ -128,7 +129,8 @@ public class BacktestData {
      */
     public File getDataFile(String ticker, LocalDate date, AggregateUpdateType aggregateUpdateType, String extension) {
         return new File(dataCacheDirectory, ticker + File.separator + date.toString() + "." +
-                (aggregateUpdateType == null ? "" : aggregateUpdateType.name().toLowerCase() + ".") + extension);
+                                            (aggregateUpdateType == null ? "" :
+                                             aggregateUpdateType.name().toLowerCase() + ".") + extension);
     }
 
     /**

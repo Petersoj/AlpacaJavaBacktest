@@ -76,7 +76,7 @@ public class BacktestBroker {
      * @param stopPrice        the stop price
      */
     public void submitOrder(String ticker, Integer quantity, OrderSide orderSide, OrderType orderType,
-            OrderTimeInForce orderTimeInForce, Double limitPrice, Double stopPrice) {
+                            OrderTimeInForce orderTimeInForce, Double limitPrice, Double stopPrice) {
         // TODO
     }
 
