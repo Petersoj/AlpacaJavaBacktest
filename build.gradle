@@ -66,10 +66,14 @@ task buildSite(type: BuildSiteTask) {
 
 processResources {
     dependsOn buildSite
-    from "$buildDir/site"
+    from("$buildDir/site") { into "site" }
+}
+
+processTestResources {
+    dependsOn buildSite
+    from("$buildDir/site") { into "site" }
 }
 
 build {
-    dependsOn processResources
     finalizedBy publishToMavenLocal
 }
