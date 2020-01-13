@@ -65,6 +65,7 @@ sourceSets {
 task buildSite(type: BuildSiteTask) {
     siteDir = file("site")
     distDir = file("$buildDir/site")
+    nodeJSBuildFile = file("site/build.js")
 }
 
 processResources {

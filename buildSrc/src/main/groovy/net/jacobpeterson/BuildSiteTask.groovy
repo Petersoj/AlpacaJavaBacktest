@@ -3,6 +3,7 @@ package net.jacobpeterson
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileType
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.*
 import org.gradle.work.ChangeType
@@ -15,32 +16,12 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 /**
- * A site/ directory should have the following structure:
- * <ul>
- *     <li>src/</li>
- *     <ul>
- *         <li>assets</li>
- *         <li>scss</li>
- *         <li>js</li>
- *         <li>index.html</li>
- *     </ul>
- *     <li>node_modules/</li>
- *     <li>package.json</li>
- *     <li>...</li>
- * </ul>
- * and will produce the following output structure:
- * <ul>
- *     <li>js/</li>
- *     <ul>
- *         <li>bundle.js</li>
- *     </ul>
- *     <li>css/</li>
- *     <ul>
- *         <li>style.css</li>
- *     </ul>
- *     <li>index.html</li>
- *     <li>...</li>
- * </ul>
+ * This is a task that will run a NodeJS 'build' file whenever there is a change to a JS, TS, JSX, TSX, CSS, or SCSS
+ * file in the passed in site directory. It will then copy everything else that isn't in the aforementioned list
+ * into the distribution directory with the exact same structure. The passed in NodeJS file will be executed as:
+ * <code>node <build.js file> <dist dir path></code>
+ * <p>
+ * This is so Gradle incremental builds can be used to speed up build time.
  */
 abstract class BuildSiteTask extends DefaultTask {
 
@@ -53,21 +34,15 @@ abstract class BuildSiteTask extends DefaultTask {
     abstract DirectoryProperty getSiteDir()
 
     // This is a directory with an implicit getter that will register our task to look for changes
-    // in this directory and execute this Task Action when there is a change (aka when gradle clean is invoked).
+    // in this directory and execute this Task Action when there is a change (aka when the output dir has been removed).
     @OutputDirectory
     abstract DirectoryProperty getDistDir()
 
-    File sourceDir
-    File sourceAssetsDir
-    File sourceSCSSDir
-    File sourceJSDir
-
-    File distAssetsDir
-    File distCSSDir
-    File distJSDir
+    @InputFile
+    abstract RegularFileProperty getNodeJSBuildFile()
 
     File nodeModulesDir
-    File[] standardExcludedFiles
+    String[] nodeJSBuildFileExtensions
 
     BuildSiteTask() {
         description = "Builds a site. See net.jacobpeterson.BuildSiteTask."
@@ -75,35 +50,16 @@ abstract class BuildSiteTask extends DefaultTask {
 
     @TaskAction
     void executeTaskAction(InputChanges inputChanges) {
-        initialize()
+        nodeModulesDir = siteDir.dir("node_modules").get().getAsFile()
+        nodeJSBuildFileExtensions = (String[]) ["js", "ts", "jsx", "tsx", "css", "scss"].toArray()
 
         checkFileTree()
-        checkNodeJS()
-
-        buildAssets(inputChanges)
-        buildHTML(inputChanges)
-        buildSCSS(inputChanges)
-        buildJS(inputChanges)
-    }
-
-    protected void initialize() {
-        sourceDir = siteDir.dir("src").get().getAsFile()
-        sourceAssetsDir = new File(sourceDir, "assets")
-        sourceSCSSDir = new File(sourceDir, "scss")
-        sourceJSDir = new File(sourceDir, "js")
-
-        distAssetsDir = distDir.get().dir("assets").getAsFile()
-        distCSSDir = distDir.get().dir("css").getAsFile()
-        distJSDir = distDir.get().dir("js").getAsFile()
-
-        nodeModulesDir = siteDir.dir("node_modules").get().getAsFile()
-        standardExcludedFiles = (File[]) ["node_modules", "package.json", "package-lock.json"]
-                .stream().map({ filePath -> new File(siteDir.get().getAsFile(), filePath) }).toArray()
+        copyFiles(inputChanges)
+        runNodeJSBuild(inputChanges)
     }
 
     protected void checkFileTree() {
-        final def requiredFiles = [sourceAssetsDir, sourceSCSSDir, sourceJSDir, nodeModulesDir,
-                                   siteDir.file("package.json").get().getAsFile()]
+        final def requiredFiles = [nodeModulesDir, siteDir.file("package.json").get().getAsFile()]
 
         File[] fileTreeDepth2 = (File[]) Files.walk(siteDir.getAsFile().get().toPath(), 2)
                 .map({ path -> path.toFile() }).toArray()
@@ -126,86 +82,34 @@ abstract class BuildSiteTask extends DefaultTask {
         }
     }
 
-    protected checkNodeJS() {
-        final def requiredPackages = ["browserify", "node-sass"]
+    protected copyFiles(InputChanges inputChanges) {
+        def excludedCopyPaths = (String[]) [".idea", "node_modules", "package.json", "package-lock.json"]
+                .stream().map({ filePath -> new File(siteDir.get().getAsFile(), filePath).getPath() }).toArray()
 
-        logger.log(LogLevel.INFO, "NodeJS version: ")
-        executeCommand(true, "node", "-v")
+        def targetedInputChanges = []
 
-        logger.log(LogLevel.INFO, "npm version: ")
-        executeCommand(true, "npm", "-v")
-
-        ArrayList<String> npmList = new ArrayList<>()
-        executeCommand(false, "npm", "list", "--depth=0").eachLine { line -> npmList.add(line) }
-
-        for (requiredPackage in requiredPackages) {
-            boolean requiredPackageNotFound = true
-
-            for (installedPackage in npmList) {
-                if (installedPackage.contains(requiredPackage)) {
-                    requiredPackageNotFound = false
-                    break
-                }
-            }
-
-            if (requiredPackageNotFound) {
-                throw new RuntimeException("You must install node package: " + requiredPackage)
-            } else {
-                logger.log(LogLevel.INFO, "Found required node package: " + requiredPackage)
-            }
-        }
-    }
-
-    protected buildAssets(InputChanges inputChanges) {
-        // Depth first to take into account deleting of directories in the source directory so that we don't delete
-        // directories that have files in them before deleting the files themselves first
-        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
-                sourceAssetsDir, distAssetsDir, standardExcludedFiles)) {
-            def fileChange = fileChangeEntry.getKey()
-            def fileSourcePath = fileChange.getFile().toPath()
-            def fileDistPath = Paths.get(fileChangeEntry.getValue())
-
-            switch (fileChange.getChangeType()) {
-                case ChangeType.ADDED:
-                case ChangeType.MODIFIED:
-                    if (fileChange.getFileType() == FileType.FILE) {
-                        Files.createDirectories(fileDistPath.toFile().getParentFile().toPath())
-                        Files.copy(fileSourcePath, fileDistPath, StandardCopyOption.REPLACE_EXISTING)
-                    } else { // DIRECTORY
-                        Files.createDirectories(fileDistPath)
-                    }
-                    break
-                case ChangeType.REMOVED:
-                    if (fileChange.getFileType() == FileType.FILE) {
-                        Files.deleteIfExists(fileDistPath)
-                    } else { // DIRECTORY
-                        def removedDirectoryFileList = fileChange.getFile().list()
-
-                        // Check if directory is empty before deleting it from distribution directory
-                        if (removedDirectoryFileList == null || removedDirectoryFileList.length == 0) {
-                            Files.deleteIfExists(fileDistPath)
-                        }
-                    }
-                    break
-            }
-
-            def fileChangeTypeString = fileChange.getChangeType().toString().toLowerCase()
-            logger.log(LogLevel.INFO, fileSourcePath.toString() + " has been " +
-                    fileChangeTypeString + " in the distribution directory.")
-        }
-    }
-
-    protected buildHTML(InputChanges inputChanges) {
-        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
-                sourceDir, distDir.get().getAsFile(), standardExcludedFiles)) {
-            def fileChange = fileChangeEntry.getKey()
-            def fileSourcePath = fileChange.getFile().toPath()
-            def fileDistPath = Paths.get(fileChangeEntry.getValue())
-
-            if (!fileChange.getFile().getName().endsWith(".html")) {
+        inputChangesLoop:
+        for (inputChange in inputChanges.getFileChanges(siteDir)) {
+            if (inputChange.getFile().getPath().endsWithAny(nodeJSBuildFileExtensions)) {
                 continue
             }
 
+            for (excludedCopyPath in excludedCopyPaths) {
+                if (inputChange.getFile().getPath().contains(excludedCopyPath)) {
+                    continue inputChangesLoop
+                }
+            }
+            targetedInputChanges.add(inputChange)
+        }
+
+        // Depth first to take into account deleting of directories in the source directory so that we don't delete
+        // directories that have files in them before deleting the files themselves first
+        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputPath(targetedInputChanges, siteDir.get().getAsFile(),
+                distDir.get().getAsFile())) {
+            def fileChange = fileChangeEntry.getKey()
+            def fileSourcePath = fileChange.getFile().toPath()
+            def fileDistPath = Paths.get(fileChangeEntry.getValue())
+
             switch (fileChange.getChangeType()) {
                 case ChangeType.ADDED:
                 case ChangeType.MODIFIED:
@@ -236,35 +140,18 @@ abstract class BuildSiteTask extends DefaultTask {
         }
     }
 
-    protected buildSCSS(InputChanges inputChanges) {
-        def fileChanges = fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
-                sourceSCSSDir, distCSSDir, standardExcludedFiles)
+    protected runNodeJSBuild(InputChanges inputChanges) {
+        def targetedInputChanges = []
 
-        if (fileChanges.size() > 0) {
-            Files.createDirectories(distCSSDir.toPath())
-
-            logger.log(LogLevel.INFO, "Executing node-sass: ")
-
-            executeCommand(true, "npx", "node-sass", sourceSCSSDir.getAbsolutePath(),
-                    "--output", distCSSDir.getAbsolutePath())
-
-            logger.log(LogLevel.INFO, "Finished executing node-sass")
+        for (inputChange in inputChanges.getFileChanges(siteDir)) {
+            if (inputChange.getFile().getPath().endsWithAny(nodeJSBuildFileExtensions)) {
+                targetedInputChanges.add(inputChange)
+            }
         }
-    }
 
-    protected buildJS(InputChanges inputChanges) {
-        def fileChanges = fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
-                sourceJSDir, distJSDir, standardExcludedFiles)
-
-        if (fileChanges.size() > 0) {
-            Files.createDirectories(distJSDir.toPath())
-
-            logger.log(LogLevel.INFO, "Executing Browserify: ")
-
-            executeCommand(true, "npx", "rollup", "--input", sourceJSDir.getAbsolutePath(),
-                    "--file", new File(distJSDir, "bundle.js").getAbsolutePath())
-
-            logger.log(LogLevel.INFO, "Finished executing Browserify")
+        if (targetedInputChanges.size() > 0) {
+            executeCommand(true, "node", nodeJSBuildFile.get().getAsFile().getPath(),
+                    distDir.get().getAsFile().getPath())
         }
     }
 
@@ -303,18 +190,16 @@ abstract class BuildSiteTask extends DefaultTask {
 
     /**
      * Sort paths in inputDir longest to shortest to get depth first of input changes file tree and then maps that
-     * path to it's corresponding desired output path.
+     * path to it's corresponding output path.
      *
      * @param fileChanges the file changes
-     * @param inputDir the directory that we care about within inputChanges
+     * @param inputDir the directory that we care about within fileChanges
      * @param outputDir the output directory that will be the starting point of the corresponding output files
      * (maintain the file tree from inputDir)
-     * @param exclude files to exclude in the final map
      * @return a map of the file change and its corresponding output file
      */
-    protected Map<FileChange, String> fileChangesDepthFirstAndMapOutputDir(Iterable<FileChange> fileChanges,
-                                                                           File inputDir, File outputDir,
-                                                                           File... excludes) {
+    protected Map<FileChange, String> fileChangesDepthFirstAndMapOutputPath(List<FileChange> fileChanges,
+                                                                            File inputDir, File outputDir) {
         // Sort paths longest to shortest to get depth first of file tree
         // This is to take into account deleting of directories in the source directory so that we don't delete
         // directories that have files in them before deleting the files themselves first
@@ -330,15 +215,8 @@ abstract class BuildSiteTask extends DefaultTask {
 
         def returnMap = new LinkedHashMap<FileChange, String>()
 
-        fileChangesLoop:
         for (fileChange in fileChanges.sort(true, longestToShortestPath)) {
             def fileChangePathString = fileChange.getFile().getPath()
-
-            for (exclude in excludes) {
-                if (fileChangePathString.contains(exclude.getPath())) {
-                    continue fileChangesLoop
-                }
-            }
 
             if (fileChange.getFileType() == FileType.MISSING) {
                 throw new UnsupportedOperationException(getClass().getName() + " cannot handle the \'missing\'" +
@@ -347,9 +225,9 @@ abstract class BuildSiteTask extends DefaultTask {
 
             // Check if source change file/directory is in the targeted input directory
             if (fileChangePathString.contains(inputDir.getPath())) {
-                def fileDistPath = fileChangePathString.replace(inputDir.getPath(), outputDir.getPath())
+                def fileOutputPath = fileChangePathString.replace(inputDir.getPath(), outputDir.getPath())
 
-                returnMap.put(fileChange, fileDistPath)
+                returnMap.put(fileChange, fileOutputPath)
             }
         }
 

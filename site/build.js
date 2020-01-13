@@ -1,3 +1,6 @@
+// TODO
+
+/*
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import postcss from 'rollup-plugin-postcss'
@@ -22,5 +25,6 @@ export default {
         jsx({factory: 'React.createElement'}),
         resolve({extensions: resolveExtensions, browser: true}),
         commonjs()
-    ],
+    ]
 };
+*/
