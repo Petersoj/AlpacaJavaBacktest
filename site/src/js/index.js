@@ -1,21 +1,26 @@
-import React, {Component} from "react";
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import DateRangePicker from "@wojtekmaj/react-daterange-picker";
+import indexStyle from "../scss/style.scss";
 
-// import DateRangePicker from "@wojtekmaj/react-daterange-picker"
+class MyDateRangePicker extends React.Component {
 
-class ShoppingList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {date: [new Date(), new Date()]};
+    }
+
+    onChange() {
+        console.log("HEYO")
+    }
+
+    // onChange = date => this.setState({date});
+
     render() {
-        return (
-                <div className="shopping-list">
-                    <h1>Shopping List for {this.props.name}</h1>
-                    <ul>
-                        <li>Instagram</li>
-                        <li>WhatsApp</li>
-                        <li>Oculus</li>
-                    </ul>
-                </div>
-        );
+        return (<DateRangePicker
+                onChange={this.onChange}
+                value={this.state.date}/>);
     }
 }
 
-ReactDOM.render(<ShoppingList name="Jacob"/>, document.getElementById("app"));
+ReactDOM.render(<MyDateRangePicker/>, document.getElementById("app"));

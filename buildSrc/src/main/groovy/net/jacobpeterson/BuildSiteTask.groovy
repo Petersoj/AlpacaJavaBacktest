@@ -57,7 +57,7 @@ abstract class BuildSiteTask extends DefaultTask {
     @OutputDirectory
     abstract DirectoryProperty getDistDir()
 
-    def sourceDir = siteDir.dir("src")
+    File sourceDir
     File sourceAssetsDir
     File sourceSCSSDir
     File sourceJSDir
@@ -87,9 +87,10 @@ abstract class BuildSiteTask extends DefaultTask {
     }
 
     protected void initialize() {
-        sourceAssetsDir = sourceDir.get().dir("assets").getAsFile()
-        sourceSCSSDir = sourceDir.get().dir("scss").getAsFile()
-        sourceJSDir = sourceDir.get().dir("js").getAsFile()
+        sourceDir = siteDir.dir("src").get().getAsFile()
+        sourceAssetsDir = new File(sourceDir, "assets")
+        sourceSCSSDir = new File(sourceDir, "scss")
+        sourceJSDir = new File(sourceDir, "js")
 
         distAssetsDir = distDir.get().dir("assets").getAsFile()
         distCSSDir = distDir.get().dir("css").getAsFile()
@@ -126,13 +127,16 @@ abstract class BuildSiteTask extends DefaultTask {
     }
 
     protected checkNodeJS() {
-        final def requiredPackages = ["browserify", "node-sass", "@babel/core", "babelify"]
+        final def requiredPackages = ["browserify", "node-sass"]
 
-        executeCommand("node", "-v").eachLine { line -> logger.log(LogLevel.INFO, "NodeJS version: " + line) }
-        executeCommand("npm", "-v").eachLine { line -> logger.log(LogLevel.INFO, "npm version: " + line) }
+        logger.log(LogLevel.INFO, "NodeJS version: ")
+        executeCommand(true, "node", "-v")
+
+        logger.log(LogLevel.INFO, "npm version: ")
+        executeCommand(true, "npm", "-v")
 
         ArrayList<String> npmList = new ArrayList<>()
-        executeCommand("npm", "list", "--depth=0").eachLine { line -> npmList.add(line) }
+        executeCommand(false, "npm", "list", "--depth=0").eachLine { line -> npmList.add(line) }
 
         for (requiredPackage in requiredPackages) {
             boolean requiredPackageNotFound = true
@@ -155,7 +159,7 @@ abstract class BuildSiteTask extends DefaultTask {
     protected buildAssets(InputChanges inputChanges) {
         // Depth first to take into account deleting of directories in the source directory so that we don't delete
         // directories that have files in them before deleting the files themselves first
-        for (fileChangeEntry in fileChangesDepthFirstMappedOutputDir(inputChanges.getFileChanges(siteDir),
+        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
                 sourceAssetsDir, distAssetsDir, standardExcludedFiles)) {
             def fileChange = fileChangeEntry.getKey()
             def fileSourcePath = fileChange.getFile().toPath()
@@ -192,8 +196,8 @@ abstract class BuildSiteTask extends DefaultTask {
     }
 
     protected buildHTML(InputChanges inputChanges) {
-        for (fileChangeEntry in fileChangesDepthFirstMappedOutputDir(inputChanges.getFileChanges(siteDir),
-                sourceDir.get().getAsFile(), distDir.get().getAsFile(), standardExcludedFiles)) {
+        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
+                sourceDir, distDir.get().getAsFile(), standardExcludedFiles)) {
             def fileChange = fileChangeEntry.getKey()
             def fileSourcePath = fileChange.getFile().toPath()
             def fileDistPath = Paths.get(fileChangeEntry.getValue())
@@ -233,32 +237,32 @@ abstract class BuildSiteTask extends DefaultTask {
     }
 
     protected buildSCSS(InputChanges inputChanges) {
-        def fileChanges = inputChanges.getFileChanges(siteDir)
+        def fileChanges = fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
+                sourceSCSSDir, distCSSDir, standardExcludedFiles)
 
         if (fileChanges.size() > 0) {
             Files.createDirectories(distCSSDir.toPath())
 
             logger.log(LogLevel.INFO, "Executing node-sass: ")
 
-            executeCommand("npx", "node-sass", sourceSCSSDir.getAbsolutePath(), "--output", distCSSDir.getAbsolutePath())
-                    .eachLine { line -> logger.log(LogLevel.INFO, "\t" + line) }
+            executeCommand(true, "npx", "node-sass", sourceSCSSDir.getAbsolutePath(),
+                    "--output", distCSSDir.getAbsolutePath())
 
             logger.log(LogLevel.INFO, "Finished executing node-sass")
         }
     }
 
     protected buildJS(InputChanges inputChanges) {
-        def fileChanges = inputChanges.getFileChanges(siteDir)
+        def fileChanges = fileChangesDepthFirstAndMapOutputDir(inputChanges.getFileChanges(siteDir),
+                sourceJSDir, distJSDir, standardExcludedFiles)
 
         if (fileChanges.size() > 0) {
             Files.createDirectories(distJSDir.toPath())
 
             logger.log(LogLevel.INFO, "Executing Browserify: ")
 
-            executeCommand("npx", "browserify", sourceJSDir.getAbsolutePath(),
-                    "-t", "[babelify", "--presets", "[@babel/preset-env", "@babel/preset-react]", "]",
-                    "-o", new File(distJSDir, "bundle.js").getAbsolutePath())
-                    .eachLine { line -> logger.log(LogLevel.INFO, "\t" + line) }
+            executeCommand(true, "npx", "rollup", "--input", sourceJSDir.getAbsolutePath(),
+                    "--file", new File(distJSDir, "bundle.js").getAbsolutePath())
 
             logger.log(LogLevel.INFO, "Finished executing Browserify")
         }
@@ -267,29 +271,34 @@ abstract class BuildSiteTask extends DefaultTask {
     /**
      * Executes a command via {@link java.lang.Process} with working directory of {@link #getSiteDir()}
      *
-     * @param command the commands
+     * @param printOutput whether or not to print the output to the Gradle logger
+     * @param commands the commands
      *
      * @return the input stream of the process
      */
-    protected InputStream executeCommand(String... command) {
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder()
-                    .directory(siteDir.getAsFile().get())
-                    .command(command)
-                    .redirectErrorStream(true)
+    protected InputStream executeCommand(boolean printOutput, String... commands) {
+        ProcessBuilder processBuilder = new ProcessBuilder()
+                .directory(siteDir.getAsFile().get())
+                .command(commands)
+                .redirectErrorStream(true)
 
-            // This is for the case that you want to run a node JS file from outside the directory containing the
-            // node_modules directory
-            processBuilder.environment().put("NODE_PATH", nodeModulesDir.getAbsolutePath())
+        // This is for the case that you want to run a node JS file from outside the directory containing the
+        // node_modules directory
+        processBuilder.environment().put("NODE_PATH", nodeModulesDir.getAbsolutePath())
 
-            Process process = processBuilder.start()
-            process.waitFor()
+        Process process = processBuilder.start()
+        process.waitFor()
 
-            return process.getInputStream()
-        } catch (IOException e) {
-            logger.log(LogLevel.ERROR, "Error executing command: " + Arrays.toString(command))
-            throw e // Fail the task
+        if (printOutput) {
+            process.getInputStream().eachLine { line -> logger.log(LogLevel.INFO, "\t" + line) }
         }
+
+        if (process.exitValue() != 0) {
+            // Fail the Gradle task
+            throw new RuntimeException("Error executing command: " + processBuilder.command())
+        }
+
+        return process.getInputStream()
     }
 
     /**
@@ -303,7 +312,7 @@ abstract class BuildSiteTask extends DefaultTask {
      * @param exclude files to exclude in the final map
      * @return a map of the file change and its corresponding output file
      */
-    protected Map<FileChange, String> fileChangesDepthFirstMappedOutputDir(Iterable<FileChange> fileChanges,
+    protected Map<FileChange, String> fileChangesDepthFirstAndMapOutputDir(Iterable<FileChange> fileChanges,
                                                                            File inputDir, File outputDir,
                                                                            File... excludes) {
         // Sort paths longest to shortest to get depth first of file tree
