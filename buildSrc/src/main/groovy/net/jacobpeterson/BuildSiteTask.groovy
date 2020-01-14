@@ -41,6 +41,7 @@ abstract class BuildSiteTask extends DefaultTask {
     @InputFile
     abstract RegularFileProperty getNodeJSBuildFile()
 
+    File sourceDir
     File nodeModulesDir
     String[] nodeJSBuildFileExtensions
 
@@ -50,6 +51,7 @@ abstract class BuildSiteTask extends DefaultTask {
 
     @TaskAction
     void executeTaskAction(InputChanges inputChanges) {
+        sourceDir = siteDir.dir("src").get().getAsFile()
         nodeModulesDir = siteDir.dir("node_modules").get().getAsFile()
         nodeJSBuildFileExtensions = (String[]) ["js", "ts", "jsx", "tsx", "css", "scss"].toArray()
 
@@ -104,7 +106,7 @@ abstract class BuildSiteTask extends DefaultTask {
 
         // Depth first to take into account deleting of directories in the source directory so that we don't delete
         // directories that have files in them before deleting the files themselves first
-        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputPath(targetedInputChanges, siteDir.get().getAsFile(),
+        for (fileChangeEntry in fileChangesDepthFirstAndMapOutputPath(targetedInputChanges, sourceDir,
                 distDir.get().getAsFile())) {
             def fileChange = fileChangeEntry.getKey()
             def fileSourcePath = fileChange.getFile().toPath()
