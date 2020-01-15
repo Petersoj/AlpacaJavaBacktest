@@ -7,6 +7,7 @@ const babelify = require("babelify");
 
 const outputDir = process.argv[2];
 
+const srcDirPath = "src";
 const mainJSPath = "src/js/main.js";
 const bundleJSPath = path.join(outputDir, "bundle.js");
 const bundleCSSPath = path.join(outputDir, "bundle.css");
@@ -17,7 +18,7 @@ if (fs.existsSync(bundleCSSPath)) {
 
 browserify(mainJSPath).transform(scssify).transform(browserifyCSS, {
     global: true,
-    rootDir: "src/",
+    rootDir: srcDirPath,
     onFlush: function (options, done) {
         fs.appendFileSync(bundleCSSPath, options.data);
 

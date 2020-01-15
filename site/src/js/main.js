@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker";
 import "../scss/main.scss";
-// import "../scss/imports.css";
 
 class MyDateRangePicker extends React.Component {
 
