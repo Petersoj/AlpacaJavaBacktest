@@ -152,8 +152,12 @@ abstract class BuildSiteTask extends DefaultTask {
         }
 
         if (targetedInputChanges.size() > 0) {
+            logger.log(LogLevel.INFO, "Running Node JS Build File")
+
             executeCommand(true, "node", nodeJSBuildFile.get().getAsFile().getPath(),
                     distDir.get().getAsFile().getPath())
+
+            logger.log(LogLevel.INFO, "Finished running Node JS Build File")
         }
     }
 
@@ -176,11 +180,12 @@ abstract class BuildSiteTask extends DefaultTask {
         processBuilder.environment().put("NODE_PATH", nodeModulesDir.getAbsolutePath())
 
         Process process = processBuilder.start()
-        process.waitFor()
 
         if (printOutput) {
             process.getInputStream().eachLine { line -> logger.log(LogLevel.INFO, "\t" + line) }
         }
+
+        process.waitFor()
 
         if (process.exitValue() != 0) {
             // Fail the Gradle task

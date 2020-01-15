@@ -11,14 +11,10 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
-    "@rollup/plugin-commonjs": "^11.0.1",
-    "@rollup/plugin-node-resolve": "^7.0.0",
-    "@rollup/plugin-replace": "^2.3.0",
-    "node-sass": "^4.13.0",
-    "rollup": "^1.29.0",
-    "rollup-plugin-babel": "^4.3.3",
-    "rollup-plugin-jsx": "^1.0.3",
-    "rollup-plugin-postcss": "^2.0.3"
+    "babelify": "^10.0.0",
+    "browserify": "^16.5.0",
+    "browserify-css": "^0.15.0",
+    "scssify": "^3.0.1"
   },
   "dependencies": {
     "@wojtekmaj/react-daterange-picker": "^2.5.0",
