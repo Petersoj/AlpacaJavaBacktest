@@ -21,8 +21,6 @@ browserify(mainJSPath).transform(scssify).transform(browserifyCSS, {
     rootDir: srcDirPath,
     onFlush: function (options, done) {
         fs.appendFileSync(bundleCSSPath, options.data);
-
-        // Do not embed CSS into a JavaScript bundle
         done(null);
     }
 }).transform(babelify, {

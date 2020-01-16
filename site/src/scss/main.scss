@@ -1,3 +1,33 @@
-.shopping-list {
-    color: red;
+// Constants
+$green: #2ad611;
+$red: #f74d47;
+$yellow: #fcd305;
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.panel {
+    max-width: 25%;
+    background-color: #EDEDED;
+
+    header {
+        padding: 4%;
+        display: flex;
+        align-items: center;
+
+        img:first-child {
+            flex: 1;
+        }
+
+        img:nth-child(2) {
+            padding-left: 10px;
+            flex: 2;
+        }
+    }
+
+    .react-daterange-picker__button:enabled:hover .react-daterange-picker__button__icon {
+        stroke: $green;
+    }
 }
