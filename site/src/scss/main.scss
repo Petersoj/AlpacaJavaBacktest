@@ -1,7 +1,8 @@
 // Constants
 $green: #2ad611;
 $red: #f74d47;
-$yellow: #fcd305;
+$yellow: #f0c700;
+$washed_yellow: #f2d61c;
 
 body {
     margin: 0;
@@ -10,11 +11,14 @@ body {
 
 .panel {
     max-width: 25%;
-    background-color: #EDEDED;
+    height: 100vh;
+    overflow: scroll;
+    background: #EDEDED;
 
     header {
         padding: 4%;
         display: flex;
+        box-sizing: border-box;
         align-items: center;
 
         img:first-child {
@@ -22,12 +26,28 @@ body {
         }
 
         img:nth-child(2) {
-            padding-left: 10px;
+            padding-left: 3%;
             flex: 2;
         }
     }
 
     .react-daterange-picker__button:enabled:hover .react-daterange-picker__button__icon {
-        stroke: $green;
+        stroke: $yellow;
+    }
+
+    .react-calendar__tile--active {
+        background: $yellow;
+    }
+
+    .react-calendar__tile--hasActive {
+        background: $yellow;
+    }
+
+    .react-calendar__tile--hasActive:enabled:hover, .react-calendar__tile--hasActive:enabled:focus {
+        background: $washed_yellow;
+    }
+
+    .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus {
+        background: $washed_yellow;
     }
 }

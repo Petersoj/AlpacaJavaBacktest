@@ -13,7 +13,7 @@ class Panel extends Component {
     }
 
     onChange = (date) => {
-        this.setState({date})
+        this.setState({date});
     };
 
     Header = () => {
