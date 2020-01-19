@@ -41,6 +41,9 @@ abstract class BuildSiteTask extends DefaultTask {
     @InputFile
     abstract RegularFileProperty getNodeJSBuildFile()
 
+    @Input
+    boolean startDevServer
+
     File sourceDir
     File nodeModulesDir
     String[] nodeJSBuildFileExtensions
@@ -51,6 +54,11 @@ abstract class BuildSiteTask extends DefaultTask {
 
     @TaskAction
     void executeTaskAction(InputChanges inputChanges) {
+        def isDaemon = Thread.allStackTraces.keySet().any { it.name.contains "Daemon" }
+        if (startDevServer && !isDaemon) {
+            throw new IllegalArgumentException("You must run this task with the --no-daemon argument!")
+        }
+
         sourceDir = siteDir.dir("src").get().getAsFile()
         nodeModulesDir = siteDir.dir("node_modules").get().getAsFile()
         nodeJSBuildFileExtensions = (String[]) ["js", "ts", "jsx", "tsx", "css", "scss"].toArray()
@@ -155,7 +163,7 @@ abstract class BuildSiteTask extends DefaultTask {
             logger.log(LogLevel.INFO, "Running Node JS Build File")
 
             executeCommand(true, "node", nodeJSBuildFile.get().getAsFile().getPath(),
-                    distDir.get().getAsFile().getPath())
+                    distDir.get().getAsFile().getPath(), startDevServer.toString())
 
             logger.log(LogLevel.INFO, "Finished running Node JS Build File")
         }

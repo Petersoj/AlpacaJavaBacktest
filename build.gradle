@@ -62,10 +62,19 @@ sourceSets {
 }
 
 
+// To run the dev server with watchify: ./gradlew devSite --no-daemon
+task devSite(type: BuildSiteTask) {
+    siteDir = file("site")
+    distDir = file("$buildDir/site")
+    nodeJSBuildFile = file("site/build.js")
+    startDevServer = true
+}
+
 task buildSite(type: BuildSiteTask) {
     siteDir = file("site")
     distDir = file("$buildDir/site")
     nodeJSBuildFile = file("site/build.js")
+    startDevServer = false
 }
 
 processResources {

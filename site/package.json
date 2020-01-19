@@ -16,7 +16,9 @@
     "browserify-css": "^0.15.0",
     "browserify-shim": "^3.8.14",
     "prop-types": "^15.7.2",
-    "scssify": "^3.0.1"
+    "scssify": "^3.0.1",
+    "static-server": "^2.2.1",
+    "watchify": "^3.11.1"
   },
   "dependencies": {
     "@wojtekmaj/react-daterange-picker": "^2.5.0",

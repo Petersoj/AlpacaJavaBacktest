@@ -1,13 +1,15 @@
 const path = require("path");
 const fs = require("fs");
+const StaticServer = require("static-server");
 const browserify = require("browserify");
 const scssify = require("scssify");
 const browserifyCSS = require("browserify-css");
 const browserifyShim = require("browserify-shim");
 const babelify = require("babelify");
+const watchify = require('watchify');
 
 const outputDir = process.argv[2];
-const watchify = process.argv[3]; // true or false
+const doWatchify = process.argv[3]; // true or false
 
 const srcDirPath = "src";
 const mainJSPath = "src/js/Site.js";
@@ -18,11 +20,34 @@ if (fs.existsSync(bundleCSSPath)) {
     fs.unlinkSync(bundleCSSPath);
 }
 
-let browserifyInstance = browserify(mainJSPath);
+let browserifyInstance = browserify(mainJSPath, {cache: {}, packageCache: {}});
+applyTransforms();
 
-// .bundle().pipe(fs.createWriteStream(bundleJSPath));
+if (doWatchify === "true") {
+    browserifyInstance.plugin(watchify);
+    browserifyInstance.on("update", bundle);
+    browserifyInstance.on('log', function (msg) {
+        console.log(msg)
+    });
 
-function applyTransforms(browserifyInstance) {
+    bundle();
+
+    const server = new StaticServer({
+        rootPath: outputDir,
+        port: 4567,
+    });
+    server.start(function () {
+        console.log('Server listening to', server.port);
+    });
+} else {
+    bundle();
+}
+
+function bundle() {
+    browserifyInstance.bundle().on("error", console.error).pipe(fs.createWriteStream(bundleJSPath));
+}
+
+function applyTransforms() {
     browserifyInstance.transform(scssify).transform(browserifyCSS, {
         global: true,
         rootDir: srcDirPath,
