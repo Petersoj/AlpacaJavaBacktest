@@ -23,12 +23,17 @@ class Panel extends Component {
         </header>;
     };
 
+    DateRangePicker = () => {
+        return <DateRangePicker
+                onChange={(date) => this.onChange(date)}
+                value={this.state.date}
+        />
+    };
+
     render() {
-        return (<div className="panel">{this.Header()}
-                    <DateRangePicker
-                            onChange={(date) => this.onChange(date)}
-                            value={this.state.date}
-                    />
+        return (<div className="panel">
+                    {this.Header()}
+                    {this.DateRangePicker()}
                 </div>
         );
     }

@@ -55,7 +55,6 @@ abstract class BuildSiteTask extends DefaultTask {
     @TaskAction
     void executeTaskAction(InputChanges inputChanges) {
         def isDaemon = Thread.allStackTraces.keySet().any { it.name.contains "Daemon" }
-        println isDaemon
         if (startDevServer && isDaemon) {
             throw new IllegalArgumentException("You must run this task with the --no-daemon argument!")
         }

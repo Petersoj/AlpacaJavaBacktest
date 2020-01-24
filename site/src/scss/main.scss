@@ -1,3 +1,9 @@
+// Imports
+@font-face {
+    font-family: Manrope;
+    src: url("assets/manrope-regular.otf") format("opentype");
+}
+
 // Constants
 $green: #2ad611;
 $red: #f74d47;
@@ -12,13 +18,12 @@ body {
 .panel {
     max-width: 25%;
     height: 100vh;
-    overflow: scroll;
+    overflow-y: scroll;
     background: #EDEDED;
 
     header {
         padding: 4%;
         display: flex;
-        box-sizing: border-box;
         align-items: center;
 
         img:first-child {
@@ -31,23 +36,40 @@ body {
         }
     }
 
-    .react-daterange-picker__button:enabled:hover .react-daterange-picker__button__icon {
-        stroke: $yellow;
+    .react-daterange-picker {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        font-family: Manrope, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+        .react-daterange-picker__button:hover .react-daterange-picker__button__icon,
+        .react-daterange-picker__button:focus .react-daterange-picker__button__icon {
+            stroke: $yellow;
+        }
+
+        :focus {
+            outline: none;
+        }
     }
 
-    .react-calendar__tile--active {
-        background: $yellow;
-    }
+    .react-calendar {
+        font-family: Manrope, "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-    .react-calendar__tile--hasActive {
-        background: $yellow;
-    }
+        .react-calendar__tile--active {
+            background: $yellow;
+        }
 
-    .react-calendar__tile--hasActive:enabled:hover, .react-calendar__tile--hasActive:enabled:focus {
-        background: $washed_yellow;
-    }
+        .react-calendar__tile--hasActive {
+            background: $yellow;
+        }
 
-    .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus {
-        background: $washed_yellow;
+        .react-calendar__tile--hasActive:enabled:hover, .react-calendar__tile--hasActive:enabled:focus {
+            background: $washed_yellow;
+        }
+
+        .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus {
+            background: $washed_yellow;
+        }
     }
 }
