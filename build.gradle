@@ -1,5 +1,3 @@
-import net.jacobpeterson.BuildSiteTask
-
 plugins {
     id 'java'
     id 'application'
@@ -23,7 +21,6 @@ repositories {
 
 dependencies {
     implementation group: 'io.github.mainstringargs', name: 'alpaca-java', version: '5.0.2'
-    implementation group: 'com.sparkjava', name: 'spark-core', version: '2.8.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.13.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.13.0'
     implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.13.0'
@@ -59,32 +56,6 @@ sourceSets {
             srcDirs = ["src/test/resources"]
         }
     }
-}
-
-
-// To run the dev server with watchify: ./gradlew devSite --no-daemon
-task devSite(type: BuildSiteTask) {
-    siteDir = file("site")
-    distDir = file("$buildDir/site")
-    nodeJSBuildFile = file("site/build.js")
-    startDevServer = true
-}
-
-task buildSite(type: BuildSiteTask) {
-    siteDir = file("site")
-    distDir = file("$buildDir/site")
-    nodeJSBuildFile = file("site/build.js")
-    startDevServer = false
-}
-
-processResources {
-    dependsOn buildSite
-    from("$buildDir/site") { into "site" }
-}
-
-processTestResources {
-    dependsOn buildSite
-    from("$buildDir/site") { into "site" }
 }
 
 build {

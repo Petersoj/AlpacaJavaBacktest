@@ -7,7 +7,6 @@ import net.jacobpeterson.algorithm.update.OtherUpdateType;
 import net.jacobpeterson.algorithm.update.TickerUpdateType;
 import net.jacobpeterson.broker.BacktestBroker;
 import net.jacobpeterson.data.BacktestData;
-import net.jacobpeterson.website.BacktestWebsite;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ public class AlpacaJavaBacktest {
 
     private final BacktestData backtestData;
     private final BacktestBroker backtestBroker;
-    private final BacktestWebsite backtestWebsite;
     private final HashMap<String, TickerUpdateType[]> tickerUpdateTypes;
     private final ArrayList<OtherUpdateType> otherUpdateTypes;
     private ZonedDateTime from;
@@ -72,7 +70,6 @@ public class AlpacaJavaBacktest {
     public AlpacaJavaBacktest(BacktestData backtestData, BacktestBroker backtestBroker) {
         this.backtestData = backtestData;
         this.backtestBroker = backtestBroker;
-        this.backtestWebsite = new BacktestWebsite(this);
         this.tickerUpdateTypes = new HashMap<>();
         this.otherUpdateTypes = new ArrayList<>();
     }

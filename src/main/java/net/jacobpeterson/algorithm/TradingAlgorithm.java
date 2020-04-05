@@ -10,22 +10,17 @@ import net.jacobpeterson.algorithm.update.other.MarketEventUpdateType;
 import net.jacobpeterson.algorithm.update.ticker.AggregateUpdateType;
 import net.jacobpeterson.broker.BacktestBroker;
 import net.jacobpeterson.data.BacktestData;
-import net.jacobpeterson.website.BacktestWebsite;
-
-import java.time.ZonedDateTime;
 
 /**
  * This is where your algorithm will listen to quotes, trades, aggregated data, and order updates and then promptly
  * submit orders to {@link BacktestBroker} accordingly. Simply create a new class that extends this one and use {@link
- * AlpacaJavaBacktest#run(TradingAlgorithm, ZonedDateTime, ZonedDateTime)} to execute a backtest. {@link BacktestBroker}
- * is updated constantly so if your algorithm references current buying power, equity, P&L, etc., you will have accurate
- * data.
+ * AlpacaJavaBacktest#run(TradingAlgorithm)} to execute a backtest. {@link BacktestBroker} is updated constantly so if
+ * your algorithm references current buying power, equity, P&L, etc., you will have accurate data.
  */
 public abstract class TradingAlgorithm {
 
     protected BacktestData backtestData;
     protected BacktestBroker backtestBroker;
-    protected BacktestWebsite backtestWebsite;
 
     /**
      * This method is executed before a backtest is executed. You'll then have access to {@link #getBacktestBroker()}
@@ -115,23 +110,5 @@ public abstract class TradingAlgorithm {
      */
     public final void setBacktestBroker(BacktestBroker backtestBroker) {
         this.backtestBroker = backtestBroker;
-    }
-
-    /**
-     * Gets backtest website.
-     *
-     * @return the backtest website
-     */
-    public final BacktestWebsite getBacktestWebsite() {
-        return backtestWebsite;
-    }
-
-    /**
-     * Sets backtest website.
-     *
-     * @param backtestWebsite the backtest website
-     */
-    public final void setBacktestWebsite(BacktestWebsite backtestWebsite) {
-        this.backtestWebsite = backtestWebsite;
     }
 }

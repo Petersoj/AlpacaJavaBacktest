@@ -72,7 +72,7 @@ public class BacktestData {
      * @return the aggregates
      */
     public Iterable<Aggregate> getAggregates(String ticker, AggregateUpdateType aggregateUpdateType, LocalDate from,
-                                             LocalDate to) {
+            LocalDate to) {
         return null;
     }
 
@@ -129,8 +129,8 @@ public class BacktestData {
      */
     public File getDataFile(String ticker, LocalDate date, AggregateUpdateType aggregateUpdateType, String extension) {
         return new File(dataCacheDirectory, ticker + File.separator + date.toString() + "." +
-                                            (aggregateUpdateType == null ? "" :
-                                             aggregateUpdateType.name().toLowerCase() + ".") + extension);
+                (aggregateUpdateType == null ? "" :
+                 aggregateUpdateType.name().toLowerCase() + ".") + extension);
     }
 
     /**

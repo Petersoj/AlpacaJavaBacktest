@@ -43,7 +43,7 @@ public class AggregateIterator implements Iterator<Aggregate> {
      * @param to                  the to
      */
     public AggregateIterator(BacktestData backtestData, String ticker, AggregateUpdateType aggregateUpdateType,
-                             LocalDate from, LocalDate to) {
+            LocalDate from, LocalDate to) {
         this.backtestData = backtestData;
         this.ticker = ticker;
         this.aggregateUpdateType = aggregateUpdateType;
@@ -61,7 +61,7 @@ public class AggregateIterator implements Iterator<Aggregate> {
     private void populateDatesLists() {
         for (LocalDate dayDate : dates) {
             File dayCachedFile = backtestData.getDataFile(ticker, dayDate, aggregateUpdateType,
-                                                          BacktestData.AGGREGATES_FILE_EXTENSION);
+                    BacktestData.AGGREGATES_FILE_EXTENSION);
 
             if (dayCachedFile.exists()) {
                 datesFilesCached.put(dayDate, dayCachedFile);
